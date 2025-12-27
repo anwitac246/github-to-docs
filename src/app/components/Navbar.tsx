@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { FileText, Menu, X, Github } from 'lucide-react';
+import { Menu, X, Github } from 'lucide-react';
+import Image from 'next/image';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,8 +20,14 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
-              <FileText className="h-5 w-5 text-primary-foreground" />
+            <div className="flex h-9 w-9 items-center justify-center">
+              <Image 
+                src="/favicon.svg" 
+                alt="Git2Docs Logo" 
+                width={36} 
+                height={36}
+                className="transition-transform duration-300 group-hover:scale-110"
+              />
             </div>
             <span className="text-xl font-bold text-foreground group-hover:text-gradient transition-all duration-300">
               Git2Docs
