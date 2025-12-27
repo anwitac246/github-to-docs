@@ -14,37 +14,42 @@ export default function Git2Docs() {
     { title: 'Generate Docs', desc: 'Beautiful documentation with syntax highlighting, smart formatting, and AI-powered descriptions.', icon: <BookOpen />, color: 'bg-blue-600' },
   ];
 
-  const leftFeatures = [
+  const features = [
     {
-      icon: <Zap className="w-10 h-10" />,
+      icon: <Zap className="w-8 h-8" />,
       title: 'Lightning Fast',
       desc: 'Generate comprehensive documentation from your GitHub repos in seconds, not hours. No manual work required.',
-      color: 'from-blue-100 to-blue-200',
-      borderColor: '#3B82F6'
+      side: 'left'
     },
     {
-      icon: <Code className="w-10 h-10" />,
+      icon: <Code className="w-8 h-8" />,
       title: 'Code-Aware Analysis',
       desc: 'Understands your codebase structure, dependencies, and relationships. Detects patterns and conventions automatically.',
-      color: 'from-slate-100 to-slate-200',
-      borderColor: '#64748B'
-    }
-  ];
-
-  const rightFeatures = [
-    {
-      icon: <GitBranch className="w-10 h-10" />,
-      title: 'Branch Support',
-      desc: 'Generate docs from any branch. Keep documentation in sync with your code across all branches effortlessly.',
-      color: 'from-blue-200 to-blue-300',
-      borderColor: '#2563EB'
+      side: 'right'
     },
     {
-      icon: <Clock className="w-10 h-10" />,
+      icon: <GitBranch className="w-8 h-8" />,
+      title: 'Branch Support',
+      desc: 'Generate docs from any branch. Keep documentation in sync with your code across all branches effortlessly.',
+      side: 'left'
+    },
+    {
+      icon: <Clock className="w-8 h-8" />,
       title: 'Auto Updates',
       desc: 'Set up webhooks to auto-regenerate docs when you push changes. Always up-to-date documentation.',
-      color: 'from-slate-200 to-slate-300',
-      borderColor: '#475569'
+      side: 'right'
+    },
+    {
+      icon: <BookOpen className="w-8 h-8" />,
+      title: 'Beautiful Output',
+      desc: 'Clean, readable documentation with syntax highlighting and smart formatting that developers love.',
+      side: 'left'
+    },
+    {
+      icon: <Sparkles className="w-8 h-8" />,
+      title: 'AI-Powered',
+      desc: 'Leverages AI to create meaningful descriptions and explanations that make sense.',
+      side: 'right'
     }
   ];
 
@@ -58,13 +63,13 @@ export default function Git2Docs() {
 
   return (
     <div className="min-h-screen bg-white">
-        <Navbar />
-            {/* Hero Section */}
+      <Navbar />
+      
+      {/* Hero Section */}
       <section id="about" className="pt-32 pb-20 px-6 relative z-0">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-             
               <h1 className="text-6xl md:text-6xl font-bold mb-6 text-blue-600 leading-tight">
                 Transform GitHub Repos Into Beautiful Docs
               </h1>
@@ -93,78 +98,47 @@ export default function Git2Docs() {
               </div>
             </div>
           </div>
-
-        
         </div>
       </section>
 
-      {/* Mission & Vision Section */}
-      <section id="mission" className="py-20 px-6 relative z-0 bg-slate-50">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `
-              linear-gradient(rgba(100, 100, 120, 0.1) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(100, 100, 120, 0.1) 1px, transparent 1px)
-            `,
-            backgroundSize: '50px 50px',
-          }}
-        ></div>
+     
 
-        <div className="relative max-w-5xl mx-auto grid md:grid-cols-2 gap-12 z-10">
-          <div
-            className="relative bg-white rounded-3xl p-8 overflow-hidden shadow-lg"
-            style={{
-              borderTop: '3px solid #1E293B',
-              borderLeft: '3px solid #1E293B',
-              borderRight: '10px solid #3B82F6',
-              borderBottom: '10px solid #64748B',
-            }}
-          >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 text-center">Our Mission</h2>
-            <p className="text-gray-700 leading-relaxed text-center">
-              At Git2Docs, we believe documentation should be effortless. Our mission is to empower developers worldwide by automating the documentation process, allowing them to focus on building great software instead of writing docs.
-            </p>
-          </div>
-
-          <div
-            className="relative bg-white rounded-3xl p-8 overflow-hidden shadow-lg"
-            style={{
-              borderTop: '3px solid #1E293B',
-              borderLeft: '3px solid #1E293B',
-              borderRight: '10px solid #3B82F6',
-              borderBottom: '10px solid #64748B',
-            }}
-          >
-            <h2 className="text-4xl font-bold mb-4 text-gray-900 text-center">Our Vision</h2>
-            <p className="text-gray-700 leading-relaxed text-center">
-              Git2Docs sets the standard for AI-powered documentation generation. We envision a future where every codebase has beautiful, up-to-date documentation that helps teams collaborate better and ship faster.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6 relative bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold mb-4 text-gray-900">Key Features</h2>
+   
+      <section id="features" className="py-16 px-6 relative bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl font-bold mb-4 text-gray-900">Powerful Features</h2>
             <p className="text-xl text-gray-600">Everything you need to document your code effortlessly</p>
           </div>
 
-          <div className="relative max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[...leftFeatures, ...rightFeatures].map((feature, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-6 rounded-2xl border-4 transition-all hover:-translate-y-1 hover:shadow-xl min-h-[300px] flex flex-col justify-between"
-                  style={{ borderColor: feature.borderColor }}
-                >
-                  <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center text-gray-900 mb-4`}>
-                    {feature.icon}
+          <div className="relative">
+            {/* Central Timeline Line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-200 via-blue-400 to-blue-200 hidden md:block"></div>
+
+            {/* Features */}
+            <div className="space-y-16">
+              {features.map((feature, i) => (
+                <div key={i} className={`relative flex items-center ${feature.side === 'left' ? 'md:flex-row' : 'md:flex-row-reverse'} flex-col`}>
+                  {/* Content */}
+                  <div className={`md:w-5/12 ${feature.side === 'left' ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'} text-center mb-8 md:mb-0`}>
+                    <div className="group">
+                      <div className={`inline-flex items-center gap-4 ${feature.side === 'left' ? 'md:flex-row-reverse' : 'md:flex-row'} flex-col mb-4`}>
+                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          {feature.icon}
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900">{feature.title}</h3>
+                      </div>
+                      <p className="text-gray-600 text-lg leading-relaxed">{feature.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900">{feature.title}</h3>
-                  <p className="text-gray-700 leading-relaxed text-sm">{feature.desc}</p>
+
+                  {/* Center Dot */}
+                  <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
+                    <div className="w-6 h-6 bg-blue-600 rounded-full border-4 border-white shadow-lg animate-pulse"></div>
+                  </div>
+
+                  {/* Spacer */}
+                  <div className="md:w-5/12"></div>
                 </div>
               ))}
             </div>
@@ -210,24 +184,7 @@ export default function Git2Docs() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl p-12 shadow-2xl">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Ready to Transform Your Documentation?
-            </h2>
-            <p className="text-xl text-blue-50 mb-8">
-              Join thousands of developers who have simplified their documentation workflow.
-            </p>
-            <button className="px-8 py-4 bg-white text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all flex items-center gap-2 text-xl mx-auto shadow-lg">
-              <Zap className="w-5 h-5" />
-              Try Git2Docs Now
-            </button>
-          </div>
-        </div>
-      </section>
-
+      
       {/* Footer */}
       <footer className="bg-gradient-to-br from-slate-800 to-slate-900 py-12 px-6 text-white">
         <div className="max-w-7xl mx-auto">
