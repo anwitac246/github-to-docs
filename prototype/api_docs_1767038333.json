@@ -1,0 +1,1137 @@
+{
+  "repository_url": "https://github.com/anwitac246/healthcare-ai-agent",
+  "analysis_time": 12.834717988967896,
+  "summary": {
+    "total_files": 30,
+    "backend_files": 16,
+    "total_apis": 20,
+    "total_functions": 107,
+    "languages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "backend_files": [
+    {
+      "file_path": "ambulance.py",
+      "language": "python",
+      "api_count": 3,
+      "function_count": 4,
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 27
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-ambulance-services",
+          "function": "get_nearby_ambulance_services",
+          "line": 31
+        },
+        {
+          "method": "POST",
+          "path": "/call-ambulance",
+          "function": "call_ambulance",
+          "line": 102
+        }
+      ],
+      "functions": [
+        {
+          "name": "normalize_phone_number",
+          "params": [
+            "number"
+          ],
+          "line": 19,
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 28,
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_ambulance_services",
+          "params": [],
+          "line": 32,
+          "is_api_handler": false
+        },
+        {
+          "name": "call_ambulance",
+          "params": [],
+          "line": 103,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "chatbot.py",
+      "language": "python",
+      "api_count": 3,
+      "function_count": 4,
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 103
+        },
+        {
+          "method": "POST",
+          "path": "/chat",
+          "function": "chat",
+          "line": 107
+        },
+        {
+          "method": "POST",
+          "path": "/classify",
+          "function": "classify_endpoint",
+          "line": 173
+        }
+      ],
+      "functions": [
+        {
+          "name": "process_image",
+          "params": [
+            "file"
+          ],
+          "line": 78,
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 104,
+          "is_api_handler": false
+        },
+        {
+          "name": "chat",
+          "params": [],
+          "line": 108,
+          "is_api_handler": false
+        },
+        {
+          "name": "classify_endpoint",
+          "params": [],
+          "line": 174,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "document.py",
+      "language": "python",
+      "api_count": 2,
+      "function_count": 8,
+      "apis": [
+        {
+          "method": "POST",
+          "path": "/diagnosis",
+          "function": "process_diagnosis",
+          "line": 161
+        },
+        {
+          "method": "GET",
+          "path": "/test",
+          "function": "test",
+          "line": 248
+        }
+      ],
+      "functions": [
+        {
+          "name": "__init__",
+          "params": [
+            "self"
+          ],
+          "line": 38,
+          "is_api_handler": false
+        },
+        {
+          "name": "extract_text",
+          "params": [
+            "self",
+            "file_path"
+          ],
+          "line": 40,
+          "is_api_handler": false
+        },
+        {
+          "name": "preprocess_text",
+          "params": [
+            "self",
+            "text"
+          ],
+          "line": 66,
+          "is_api_handler": false
+        },
+        {
+          "name": "rule_based_extraction",
+          "params": [
+            "text"
+          ],
+          "line": 76,
+          "is_api_handler": false
+        },
+        {
+          "name": "create_analysis_task",
+          "params": [
+            "text"
+          ],
+          "line": 128,
+          "is_api_handler": false
+        },
+        {
+          "name": "create_summary_task",
+          "params": [
+            "analysis_output",
+            "Any]"
+          ],
+          "line": 148,
+          "is_api_handler": false
+        },
+        {
+          "name": "process_diagnosis",
+          "params": [],
+          "line": 162,
+          "is_api_handler": false
+        },
+        {
+          "name": "test",
+          "params": [],
+          "line": 249,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "location.py",
+      "language": "python",
+      "api_count": 4,
+      "function_count": 9,
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 82
+        },
+        {
+          "method": "GET",
+          "path": "/specializations",
+          "function": "get_specializations",
+          "line": 93
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-doctors",
+          "function": "get_nearby_doctors",
+          "line": 120
+        },
+        {
+          "method": "GET",
+          "path": "/doctor-details/<place_id>",
+          "function": "get_doctor_details",
+          "line": 278
+        }
+      ],
+      "functions": [
+        {
+          "name": "calculate_distance",
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ],
+          "line": 15,
+          "is_api_handler": false
+        },
+        {
+          "name": "get_place_details",
+          "params": [
+            "place_id"
+          ],
+          "line": 31,
+          "is_api_handler": false
+        },
+        {
+          "name": "sort_doctors",
+          "params": [
+            "doctors",
+            "sort_by",
+            "user_lat=None",
+            "user_lng=None"
+          ],
+          "line": 49,
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 83,
+          "is_api_handler": false
+        },
+        {
+          "name": "get_specializations",
+          "params": [],
+          "line": 94,
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_doctors",
+          "params": [],
+          "line": 121,
+          "is_api_handler": false
+        },
+        {
+          "name": "get_doctor_details",
+          "params": [
+            "place_id"
+          ],
+          "line": 279,
+          "is_api_handler": false
+        },
+        {
+          "name": "not_found",
+          "params": [
+            "error"
+          ],
+          "line": 297,
+          "is_api_handler": false
+        },
+        {
+          "name": "internal_error",
+          "params": [
+            "error"
+          ],
+          "line": 301,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "server.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 0,
+      "apis": [],
+      "functions": []
+    },
+    {
+      "file_path": "yoga.py",
+      "language": "python",
+      "api_count": 4,
+      "function_count": 8,
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/video_feed",
+          "function": "video_feed",
+          "line": 245
+        },
+        {
+          "method": "POST",
+          "path": "/update_session",
+          "function": "update_session",
+          "line": 253
+        },
+        {
+          "method": "POST",
+          "path": "/reset_session",
+          "function": "reset_session",
+          "line": 282
+        },
+        {
+          "method": "GET",
+          "path": "/health",
+          "function": "health_check",
+          "line": 301
+        }
+      ],
+      "functions": [
+        {
+          "name": "detectPose",
+          "params": [
+            "image",
+            "pose"
+          ],
+          "line": 31,
+          "is_api_handler": false
+        },
+        {
+          "name": "calculateAngle",
+          "params": [
+            "landmark1",
+            "landmark2",
+            "landmark3"
+          ],
+          "line": 58,
+          "is_api_handler": false
+        },
+        {
+          "name": "classifyPose",
+          "params": [
+            "landmarks",
+            "output_image"
+          ],
+          "line": 72,
+          "is_api_handler": false
+        },
+        {
+          "name": "webcam_feed",
+          "params": [],
+          "line": 175,
+          "is_api_handler": false
+        },
+        {
+          "name": "video_feed",
+          "params": [],
+          "line": 246,
+          "is_api_handler": false
+        },
+        {
+          "name": "update_session",
+          "params": [],
+          "line": 254,
+          "is_api_handler": false
+        },
+        {
+          "name": "reset_session",
+          "params": [],
+          "line": 283,
+          "is_api_handler": true
+        },
+        {
+          "name": "health_check",
+          "params": [],
+          "line": 302,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "pages\\api\\send-email.js",
+      "language": "javascript",
+      "api_count": 4,
+      "function_count": 0,
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3
+        },
+        {
+          "method": "POST",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3
+        },
+        {
+          "method": "PUT",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3
+        }
+      ],
+      "functions": []
+    },
+    {
+      "file_path": "src\\app\\firebase-config.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 0,
+      "apis": [],
+      "functions": []
+    },
+    {
+      "file_path": "src\\app\\about\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 2,
+      "apis": [],
+      "functions": [
+        {
+          "name": "About",
+          "params": [],
+          "line": 7,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "line": 18,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\appointment\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 5,
+      "apis": [],
+      "functions": [
+        {
+          "name": "BookAppointment",
+          "params": [],
+          "line": 12,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSubmit",
+          "params": [
+            "e"
+          ],
+          "line": 96,
+          "is_api_handler": false
+        },
+        {
+          "name": "getFilteredAppointments",
+          "params": [],
+          "line": 152,
+          "is_api_handler": false
+        },
+        {
+          "name": "getStatusIcon",
+          "params": [
+            "status"
+          ],
+          "line": 186,
+          "is_api_handler": false
+        },
+        {
+          "name": "getModeIcon",
+          "params": [
+            "mode"
+          ],
+          "line": 221,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\diagnosis\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 12,
+      "apis": [],
+      "functions": [
+        {
+          "name": "Diagnosis",
+          "params": [],
+          "line": 26,
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleRecording",
+          "params": [],
+          "line": 91,
+          "is_api_handler": false
+        },
+        {
+          "name": "speakText",
+          "params": [
+            "text",
+            "index"
+          ],
+          "line": 124,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakInput",
+          "params": [],
+          "line": 175,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakMessage",
+          "params": [
+            "content",
+            "index"
+          ],
+          "line": 190,
+          "is_api_handler": false
+        },
+        {
+          "name": "load",
+          "params": [],
+          "line": 211,
+          "is_api_handler": false
+        },
+        {
+          "name": "onScroll",
+          "params": [],
+          "line": 236,
+          "is_api_handler": false
+        },
+        {
+          "name": "scrollToBottom",
+          "params": [],
+          "line": 243,
+          "is_api_handler": false
+        },
+        {
+          "name": "startNewChat",
+          "params": [
+            "firebaseDb",
+            "u"
+          ],
+          "line": 267,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSendMessage",
+          "params": [
+            "overrideText"
+          ],
+          "line": 275,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleDocumentUpload",
+          "params": [
+            "e"
+          ],
+          "line": 355,
+          "is_api_handler": false
+        },
+        {
+          "name": "generatePDFReport",
+          "params": [
+            "name",
+            "email",
+            "dob",
+            "diag",
+            "conf"
+          ],
+          "line": 419,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\login\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 5,
+      "apis": [],
+      "functions": [
+        {
+          "name": "Login",
+          "params": [],
+          "line": 21,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSignUp",
+          "params": [
+            "e"
+          ],
+          "line": 74,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleLogin",
+          "params": [
+            "e"
+          ],
+          "line": 105,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleGoogle",
+          "params": [],
+          "line": 142,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleExtraInfo",
+          "params": [
+            "e"
+          ],
+          "line": 177,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\profile\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 3,
+      "apis": [],
+      "functions": [
+        {
+          "name": "ProfilePage",
+          "params": [],
+          "line": 22,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleChange",
+          "params": [
+            "e"
+          ],
+          "line": 122,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSave",
+          "params": [],
+          "line": 126,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 2,
+      "apis": [],
+      "functions": [
+        {
+          "name": "Home",
+          "params": [],
+          "line": 9,
+          "is_api_handler": false
+        },
+        {
+          "name": "createRoom",
+          "params": [],
+          "line": 13,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\[roomId]\\page.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 10,
+      "apis": [],
+      "functions": [
+        {
+          "name": "Room",
+          "params": [],
+          "line": 22,
+          "is_api_handler": false
+        },
+        {
+          "name": "debugLog",
+          "params": [
+            "message"
+          ],
+          "line": 43,
+          "is_api_handler": false
+        },
+        {
+          "name": "connectToNewUser",
+          "params": [
+            "userId",
+            "stream"
+          ],
+          "line": 242,
+          "is_api_handler": false
+        },
+        {
+          "name": "addVideoStream",
+          "params": [
+            "video",
+            "stream",
+            "id",
+            "isLocal"
+          ],
+          "line": 260,
+          "is_api_handler": false
+        },
+        {
+          "name": "removeVideo",
+          "params": [
+            "id"
+          ],
+          "line": 322,
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleAudio",
+          "params": [],
+          "line": 330,
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleVideo",
+          "params": [],
+          "line": 338,
+          "is_api_handler": false
+        },
+        {
+          "name": "shareLink",
+          "params": [],
+          "line": 346,
+          "is_api_handler": false
+        },
+        {
+          "name": "endCall",
+          "params": [],
+          "line": 352,
+          "is_api_handler": false
+        },
+        {
+          "name": "formatTime",
+          "params": [
+            "sec"
+          ],
+          "line": 358,
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\components\\homepage.js",
+      "language": "javascript",
+      "api_count": 0,
+      "function_count": 3,
+      "apis": [],
+      "functions": [
+        {
+          "name": "Homepage",
+          "params": [],
+          "line": 12,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleScroll",
+          "params": [],
+          "line": 18,
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "line": 41,
+          "is_api_handler": false
+        }
+      ]
+    }
+  ],
+  "api_documentation": {
+    "ambulance.py": {
+      "api_documentation": "**SUMMARY:**\nThe `ambulance.py` file is a Python API that provides endpoints for users to find nearby ambulance services and call for emergency assistance. It utilizes a RESTful API architecture and supports JSON data formats for requests and responses.\n\n**API_ENDPOINTS:**\n\n### 1. GET / (Root Endpoint)\n\n* **Purpose and Functionality:** Returns a welcome message to the user.\n* **Parameters:**\n\t+ None\n* **Request/Response Examples:**\n\t+ **Request:** `GET /`\n\t+ **Response:** `200 OK` with a JSON body containing the welcome message: `{\"message\": \"Welcome to the ambulance API.\"}`\n* **Error Codes:**\n\t+ None\n\n### 2. POST /nearby-ambulance-services\n\n* **Purpose and Functionality:** Returns a list of nearby ambulance services based on the provided location.\n* **Parameters:**\n\t+ **Body:**\n\t\t- `lat` (float): Latitude of the location\n\t\t- `lng` (float): Longitude of the location\n\t\t- `text` (string): Optional search text for nearby services\n* **Request/Response Examples:**\n\t+ **Request:** `POST /nearby-ambulance-services` with a JSON body containing the location and search text:\n```json\n{\n  \"lat\": 37.7749,\n  \"lng\": -122.4194,\n  \"text\": \"ambulance services near me\"\n}\n```\n\t+ **Response:** `200 OK` with a JSON body containing the list of nearby ambulance services:\n```json\n[\n  {\n    \"name\": \"Ambulance Service 1\",\n    \"address\": \"123 Main St, San Francisco, CA 94105\"\n  },\n  {\n    \"name\": \"Ambulance Service 2\",\n    \"address\": \"456 Elm St, San Francisco, CA 94105\"\n  }\n]\n```\n* **Error Codes:**\n\t+ `400 Bad Request`: If the request body is missing or invalid\n\t+ `500 Internal Server Error`: If an error occurs while processing the request\n\n### 3. POST /call-ambulance\n\n* **Purpose and Functionality:** Calls for emergency assistance and sends a notification to the user.\n* **Parameters:**\n\t+ **Body:**\n\t\t- `name` (string): Name of the person calling for assistance\n\t\t- `phone_number` (string): Phone number of the person calling for assistance\n\t\t- `override_phone_number` (string): Optional override phone number for the notification\n\t\t- `confirm` (boolean): Optional confirmation flag for the notification\n\t\t- `lat` (float): Latitude of the location\n\t\t- `lng` (float): Longitude of the location\n* **Request/Response Examples:**\n\t+ **Request:** `POST /call-ambulance` with a JSON body containing the caller's information and location:\n```json\n{\n  \"name\": \"John Doe\",\n  \"phone_number\": \"+1-415-123-4567\",\n  \"override_phone_number\": \"+1-415-789-0123\",\n  \"confirm\": true,\n  \"lat\": 37.7749,\n  \"lng\": -122.4194\n}\n```\n\t+ **Response:** `200 OK` with a JSON body containing the notification status:\n```json\n{\n  \"message\": \"Notification sent successfully\"\n}\n```\n* **Error Codes:**\n\t+ `400 Bad Request`: If the request body is missing or invalid\n\t+ `500 Internal Server Error`: If an error occurs while processing the request\n\n**FUNCTIONS:**\n\n### 1. normalize_phone_number(number)\n\n* **Purpose and Usage:** Normalizes a phone number by removing non-digit characters and adding the country code.\n* **Parameters:**\n\t+ `number` (string): Phone number to normalize\n* **Return Value:** Normalized phone number as a string\n* **Integration with APIs:** This function is used in the `call_ambulance` endpoint to normalize the phone number before sending the notification.\n\n### 2. home()\n\n* **Purpose and Usage:** Returns a welcome message to the user.\n* **Parameters:**\n\t+ None\n* **Return Value:** Welcome message as a string\n* **Integration with APIs:** This function is used as the root endpoint of the API.\n\n### 3. get_nearby_ambulance_services()\n\n* **Purpose and Usage:** Returns a list of nearby ambulance services based on the provided location.\n* **Parameters:**\n\t+ `lat` (float): Latitude of the location\n\t+ `lng` (float): Longitude of the location\n\t+ `text` (string): Optional search text for nearby services\n* **Return Value:** List of nearby ambulance services as a JSON object",
+      "api_count": 3,
+      "function_count": 4,
+      "language": "python"
+    },
+    "chatbot.py": {
+      "api_documentation": "**SUMMARY:**\n\nThe `chatbot.py` file is a Python API that provides a simple chatbot functionality. It allows users to interact with the chatbot through two endpoints: `/chat` and `/classify`. The `/chat` endpoint enables users to send messages to the chatbot, while the `/classify` endpoint allows users to classify messages based on their content.\n\n**API_ENDPOINTS:**\n\n### GET /\n\n* **Purpose and Functionality:** Returns a welcome message to the user, indicating the available endpoints for interacting with the chatbot.\n* **Parameters:** None\n* **Request/Response Examples:**\n\t+ Request: `GET /`\n\t+ Response: `Welcome to the Diagnosis API. Please POST your data to /chat or /classify.`\n* **Error Codes:** None\n\n### POST /chat\n\n* **Purpose and Functionality:** Allows users to send messages to the chatbot.\n* **Parameters:**\n\t+ `message`: The message to be sent to the chatbot (required)\n* **Request/Response Examples:**\n\t+ Request: `POST /chat` with `message=Hello, how are you?`\n\t+ Response: `None` (the chatbot will process the message internally)\n* **Error Codes:**\n\t+ 400: `No message provided` (if no message is sent in the request body)\n\n### POST /classify\n\n* **Purpose and Functionality:** Allows users to classify messages based on their content.\n* **Parameters:**\n\t+ `message`: The message to be classified (required)\n\t+ `history`: The conversation history (optional)\n* **Request/Response Examples:**\n\t+ Request: `POST /classify` with `message=I have a headache` and `history=I have a fever`\n\t+ Response: `None` (the chatbot will process the message internally)\n* **Error Codes:**\n\t+ 400: `No message provided` (if no message is sent in the request body)\n\n**FUNCTIONS:**\n\n### process_image(file)\n\n* **Purpose and Usage:** Processes an image file by converting it to RGB mode and resizing it to 224x224 pixels.\n* **Parameters:**\n\t+ `file`: The image file to be processed\n* **Return Values:** The processed image array\n* **Integration with APIs:** This function is not directly integrated with any APIs, but it can be used as a utility function to process images before sending them to the chatbot.\n\n### home()\n\n* **Purpose and Usage:** Returns a welcome message to the user.\n* **Parameters:** None\n* **Return Values:** The welcome message\n* **Integration with APIs:** This function is used as a route handler for the `/` endpoint.\n\n### chat()\n\n* **Purpose and Usage:** Handles incoming messages from the user.\n* **Parameters:** None\n* **Return Values:** None (the chatbot will process the message internally)\n* **Integration with APIs:** This function is used as a route handler for the `/chat` endpoint.\n\n### classify_endpoint()\n\n* **Purpose and Usage:** Handles incoming messages from the user and classifies them based on their content.\n* **Parameters:** None\n* **Return Values:** None (the chatbot will process the message internally)\n* **Integration with APIs:** This function is used as a route handler for the `/classify` endpoint.\n\n**SETUP_INSTRUCTIONS:**\n\n1. **Prerequisites:** You need to have Python 3.8 or later installed on your system.\n2. **Environment Variables:** You need to set the `FLASK_APP` environment variable to `chatbot.py` to run the Flask application.\n3. **Start Commands:** Run the following command to start the Flask application: `flask run`\n4. **Port/URL Information:** The Flask application will run on port 5000 by default. You can access the API endpoints at `http://localhost:5000/`.\n\n**USAGE_EXAMPLES:**\n\n### cURL Commands\n\n* Send a message to the chatbot: `curl -X POST -H \"Content-Type: application/json\" -d '{\"message\": \"Hello, how are you?\"}' http://localhost:5000/chat`\n* Classify a message: `curl -X POST -H \"Content-Type: application/json\" -d '{\"message\": \"I have a headache\", \"history\": \"I have a fever\"}' http://localhost:5000/classify`\n\n### JavaScript Fetch Examples\n\n* Send a message to the chatbot: `fetch('http://localhost:5000/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: 'Hello, how are you?' }) })`\n* Classify a message: `fetch('http://localhost:5000/classify', { method: 'POST', headers: { 'Content-Type':",
+      "api_count": 3,
+      "function_count": 4,
+      "language": "python"
+    },
+    "document.py": {
+      "api_documentation": "**SUMMARY**\n\nThis API is designed to process medical documents and provide analysis on the extracted information. The API consists of two endpoints: one for diagnosis and another for testing the backend. The API uses Natural Language Processing (NLP) techniques to extract relevant information from medical documents.\n\n**API_ENDPOINTS**\n\n### POST /diagnosis\n\n**Purpose and Functionality**\n\nThe `/diagnosis` endpoint is used to process a medical document and extract relevant information. The endpoint accepts a file in the request body and returns a JSON response with the extracted information.\n\n**Parameters**\n\n* **file**: The medical document file to be processed. The file must be in PDF, PNG, JPG, or JPEG format.\n\n**Request/Response Examples**\n\n**Request**\n```bash\ncurl -X POST \\\n  http://localhost:3003/diagnosis \\\n  -H 'Content-Type: application/json' \\\n  -F 'file=@/path/to/document.pdf'\n```\n**Response**\n```json\n{\n  \"symptoms\": [\"fever\", \"cough\"],\n  \"conditions\": [\"diabetes\", \"bronchitis\"],\n  \"medications\": [\"paracetamol\", \"ibuprofen\"],\n  \"tests\": [\"blood test\", \"urine test\"],\n  \"dates\": [\"2022-01-01\", \"2022-01-15\"],\n  \"numerical_results\": [\"100\", \"200\"]\n}\n```\n**Error Codes**\n\n* **400**: No file provided in the request body.\n* **500**: Error processing the file.\n\n### GET /test\n\n**Purpose and Functionality**\n\nThe `/test` endpoint is used to test the backend and verify that it is running correctly. The endpoint returns a JSON response with a success message.\n\n**Parameters**\n\n* None\n\n**Request/Response Examples**\n\n**Request**\n```bash\ncurl -X GET \\\n  http://localhost:3003/test\n```\n**Response**\n```json\n{\n  \"message\": \"Backend is running\"\n}\n```\n**Error Codes**\n\n* None\n\n**FUNCTIONS**\n\n### __init__(self)\n\n**Purpose and Usage**\n\nThe `__init__` method is used to initialize the API instance. It sets up the NLP library and other dependencies.\n\n**Parameters and Return Values**\n\n* None\n\n**Integration with APIs**\n\nThe `__init__` method is used to set up the NLP library and other dependencies. It is called when an instance of the API class is created.\n\n### extract_text(self, file_path)\n\n**Purpose and Usage**\n\nThe `extract_text` method is used to extract text from a medical document. It uses the NLP library to extract the text from the document.\n\n**Parameters and Return Values**\n\n* **file_path**: The path to the medical document file.\n* **return**: The extracted text as a string.\n\n**Integration with APIs**\n\nThe `extract_text` method is used to extract text from medical documents. It is called by the `/diagnosis` endpoint to extract text from the uploaded file.\n\n### preprocess_text(self, text)\n\n**Purpose and Usage**\n\nThe `preprocess_text` method is used to preprocess the extracted text. It removes unnecessary characters and whitespace from the text.\n\n**Parameters and Return Values**\n\n* **text**: The extracted text as a string.\n* **return**: The preprocessed text as a string.\n\n**Integration with APIs**\n\nThe `preprocess_text` method is used to preprocess the extracted text. It is called by the `/diagnosis` endpoint to preprocess the extracted text.\n\n### rule_based_extraction(text)\n\n**Purpose and Usage**\n\nThe `rule_based_extraction` method is used to extract relevant information from the preprocessed text. It uses rule-based techniques to extract symptoms, conditions, medications, tests, dates, and numerical results.\n\n**Parameters and Return Values**\n\n* **text**: The preprocessed text as a string.\n* **return**: A dictionary with the extracted information.\n\n**Integration with APIs**\n\nThe `rule_based_extraction` method is used to extract relevant information from the preprocessed text. It is called by the `/diagnosis` endpoint to extract information from the preprocessed text.\n\n### create_analysis_task(text)\n\n**Purpose and Usage**\n\nThe `create_analysis_task` method is used to create an analysis task based on the extracted information. It creates a task with a description and a list of extracted information.\n\n**Parameters and Return Values**\n\n* **text**: The extracted text as a string.\n* **return**: An analysis task object.\n\n**Integration with APIs**\n\nThe `create_analysis_task` method is used to create an analysis task based on the extracted information. It is called by the `/diagnosis` endpoint to create an analysis task.\n\n**SETUP_INSTRUCTIONS**\n\n### Prerequisites\n\n* Python 3.8 or later\n* Flask 2.0 or later\n* NLP library (e.g. spaCy)\n* PDF library (e.g. pdfpl",
+      "api_count": 2,
+      "function_count": 8,
+      "language": "python"
+    },
+    "location.py": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5118, Re",
+      "api_count": 4,
+      "function_count": 9,
+      "language": "python"
+    },
+    "server.js": {
+      "api_documentation": "**server.js API Documentation**\n\n**SUMMARY**\n\nThe `server.js` file is the entry point of a Node.js application that serves as a RESTful API. It sets up an Express.js server, defines routes, and handles requests. This API provides a foundation for building a robust and scalable web application.\n\n**API_ENDPOINTS**\n\nSince there are no API endpoints defined in the provided `server.js` file, we will assume that this file is a starting point for building an API and will provide a general outline of how to define API endpoints.\n\n**Defining API Endpoints**\n\nTo define API endpoints, you can use the Express.js router to create routes for handling HTTP requests. Here's an example of how to define a simple API endpoint:\n\n```javascript\nconst express = require('express');\nconst app = express();\n\n// Define a GET endpoint for retrieving a list of users\napp.get('/users', (req, res) => {\n  // Retrieve users from the database or a data source\n  const users = [...]; // Replace with actual data retrieval logic\n  res.json(users);\n});\n```\n\n**Parameters**\n\n* **Path**: The path to the endpoint, e.g., `/users`.\n* **Query**: Optional query parameters that can be passed with the request, e.g., `?name=John&age=30`.\n* **Body**: The request body, which can contain JSON data, e.g., `{ \"name\": \"John\", \"age\": 30 }`.\n\n**Request/Response Examples**\n\n* **GET /users**\n\t+ Request: `GET /users HTTP/1.1`\n\t+ Response: `200 OK` with a JSON array of users, e.g., `[{\"id\": 1, \"name\": \"John\"}, {\"id\": 2, \"name\": \"Jane\"}]`.\n* **POST /users**\n\t+ Request: `POST /users HTTP/1.1` with a JSON body, e.g., `{\"name\": \"Bob\", \"age\": 40}`.\n\t+ Response: `201 Created` with a JSON object containing the created user, e.g., `{\"id\": 3, \"name\": \"Bob\", \"age\": 40}`.\n\n**Error Codes**\n\n* **404 Not Found**: The requested endpoint does not exist.\n* **500 Internal Server Error**: An unexpected error occurred while processing the request.\n\n**FUNCTIONS**\n\nSince there are no functions defined in the provided `server.js` file, we will assume that this file is a starting point for building an API and will provide a general outline of how to define functions.\n\n**Defining Functions**\n\nTo define functions, you can use JavaScript's built-in `function` keyword or arrow functions. Here's an example of how to define a simple function:\n\n```javascript\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n```\n\n**Purpose and Usage**\n\n* **Purpose**: The `greet` function takes a name as an argument and returns a personalized greeting message.\n* **Usage**: Call the `greet` function by passing a name as an argument, e.g., `const greeting = greet(\"John\");`.\n\n**Parameters and Return Values**\n\n* **Parameters**: `name` (string)\n* **Return Value**: A string containing the personalized greeting message\n\n**Integration with APIs**\n\nTo integrate the `greet` function with an API, you can use the `fetch` API or a library like Axios to make HTTP requests. Here's an example of how to use the `fetch` API to call the `greet` function:\n\n```javascript\nfetch('/greet', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ name: 'John' }),\n})\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => console.error(error));\n```\n\n**SETUP_INSTRUCTIONS**\n\nTo run this API, follow these steps:\n\n**Prerequisites**\n\n* Node.js (version 14 or higher)\n* npm (version 6 or higher)\n* Express.js (version 4 or higher)\n\n**Environment Variables**\n\n* `PORT`: The port number to listen on (default: 3000)\n* `NODE_ENV`: The environment (development, production, or test)\n\n**Start Commands**\n\n* `npm start`: Start the server in development mode\n* `npm run start:prod`: Start the server in production mode\n* `npm run start:test`: Start the server in test mode\n\n**Port/URL Information**\n\n* **Development Mode**: `http://localhost:3000`\n* **Production Mode**: `http://<your-domain.com>:3000`\n* **Test Mode**: `http://localhost:3001`\n\n**USAGE_EXAMPLES**\n\nHere are some complete examples of how to use this API:\n\n**c",
+      "api_count": 0,
+      "function_count": 0,
+      "language": "javascript"
+    },
+    "yoga.py": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5995, Re",
+      "api_count": 4,
+      "function_count": 8,
+      "language": "python"
+    },
+    "pages\\api\\send-email.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5990, Re",
+      "api_count": 4,
+      "function_count": 0,
+      "language": "javascript"
+    },
+    "src\\app\\firebase-config.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5984, Re",
+      "api_count": 0,
+      "function_count": 0,
+      "language": "javascript"
+    },
+    "src\\app\\about\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5979, Re",
+      "api_count": 0,
+      "function_count": 2,
+      "language": "javascript"
+    },
+    "src\\app\\appointment\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5974, Re",
+      "api_count": 0,
+      "function_count": 5,
+      "language": "javascript"
+    },
+    "src\\app\\diagnosis\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5969, Re",
+      "api_count": 0,
+      "function_count": 12,
+      "language": "javascript"
+    },
+    "src\\app\\login\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5964, Re",
+      "api_count": 0,
+      "function_count": 5,
+      "language": "javascript"
+    },
+    "src\\app\\profile\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5959, Re",
+      "api_count": 0,
+      "function_count": 3,
+      "language": "javascript"
+    },
+    "src\\app\\room\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5953, Re",
+      "api_count": 0,
+      "function_count": 2,
+      "language": "javascript"
+    },
+    "src\\app\\room\\[roomId]\\page.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5948, Re",
+      "api_count": 0,
+      "function_count": 10,
+      "language": "javascript"
+    },
+    "src\\components\\homepage.js": {
+      "api_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5942, Re",
+      "api_count": 0,
+      "function_count": 3,
+      "language": "javascript"
+    }
+  },
+  "all_files": [
+    {
+      "file_path": "ambulance.py",
+      "language": "python",
+      "lines_of_code": 167,
+      "function_count": 4,
+      "is_backend": true
+    },
+    {
+      "file_path": "chatbot.py",
+      "language": "python",
+      "lines_of_code": 224,
+      "function_count": 4,
+      "is_backend": true
+    },
+    {
+      "file_path": "document.py",
+      "language": "python",
+      "lines_of_code": 243,
+      "function_count": 8,
+      "is_backend": true
+    },
+    {
+      "file_path": "eslint.config.mjs",
+      "language": "javascript",
+      "lines_of_code": 10,
+      "function_count": 0,
+      "is_backend": false
+    },
+    {
+      "file_path": "location.py",
+      "language": "python",
+      "lines_of_code": 273,
+      "function_count": 9,
+      "is_backend": true
+    },
+    {
+      "file_path": "next.config.mjs",
+      "language": "javascript",
+      "lines_of_code": 3,
+      "function_count": 0,
+      "is_backend": false
+    },
+    {
+      "file_path": "postcss.config.mjs",
+      "language": "javascript",
+      "lines_of_code": 4,
+      "function_count": 0,
+      "is_backend": false
+    },
+    {
+      "file_path": "server.js",
+      "language": "javascript",
+      "lines_of_code": 92,
+      "function_count": 0,
+      "is_backend": true
+    },
+    {
+      "file_path": "yoga.py",
+      "language": "python",
+      "lines_of_code": 286,
+      "function_count": 8,
+      "is_backend": true
+    },
+    {
+      "file_path": "pages\\api\\send-email.js",
+      "language": "javascript",
+      "lines_of_code": 39,
+      "function_count": 0,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\firebase-config.js",
+      "language": "javascript",
+      "lines_of_code": 17,
+      "function_count": 0,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\layout.js",
+      "language": "javascript",
+      "lines_of_code": 30,
+      "function_count": 1,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\page.js",
+      "language": "javascript",
+      "lines_of_code": 14,
+      "function_count": 1,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\about\\page.js",
+      "language": "javascript",
+      "lines_of_code": 202,
+      "function_count": 2,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\ambulance\\page.js",
+      "language": "javascript",
+      "lines_of_code": 298,
+      "function_count": 4,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\appointment\\page.js",
+      "language": "javascript",
+      "lines_of_code": 666,
+      "function_count": 5,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\contact\\page.js",
+      "language": "javascript",
+      "lines_of_code": 401,
+      "function_count": 4,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\diagnosis\\page.js",
+      "language": "javascript",
+      "lines_of_code": 615,
+      "function_count": 12,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\doctor_profile\\page.js",
+      "language": "javascript",
+      "lines_of_code": 327,
+      "function_count": 2,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\location_docs\\page.js",
+      "language": "javascript",
+      "lines_of_code": 574,
+      "function_count": 6,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\app\\login\\page.js",
+      "language": "javascript",
+      "lines_of_code": 565,
+      "function_count": 5,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\profile\\page.js",
+      "language": "javascript",
+      "lines_of_code": 305,
+      "function_count": 3,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\room\\page.js",
+      "language": "javascript",
+      "lines_of_code": 53,
+      "function_count": 2,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\room\\[roomId]\\page.js",
+      "language": "javascript",
+      "lines_of_code": 491,
+      "function_count": 10,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\app\\yoga\\page.js",
+      "language": "javascript",
+      "lines_of_code": 432,
+      "function_count": 10,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\components\\homepage.js",
+      "language": "javascript",
+      "lines_of_code": 116,
+      "function_count": 3,
+      "is_backend": true
+    },
+    {
+      "file_path": "src\\components\\navbar.js",
+      "language": "javascript",
+      "lines_of_code": 209,
+      "function_count": 2,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\components\\ui\\input.js",
+      "language": "javascript",
+      "lines_of_code": 47,
+      "function_count": 1,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\components\\ui\\label.js",
+      "language": "javascript",
+      "lines_of_code": 16,
+      "function_count": 0,
+      "is_backend": false
+    },
+    {
+      "file_path": "src\\lib\\utils.js",
+      "language": "javascript",
+      "lines_of_code": 5,
+      "function_count": 1,
+      "is_backend": false
+    }
+  ]
+}
