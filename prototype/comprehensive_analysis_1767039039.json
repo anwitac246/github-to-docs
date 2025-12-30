@@ -1,0 +1,3426 @@
+{
+  "repository_url": "https://github.com/anwitac246/healthcare-ai-agent",
+  "repository_info": {
+    "name": "healthcare-ai-agent",
+    "owner": "anwitac246",
+    "url": "https://github.com/anwitac246/healthcare-ai-agent",
+    "description": "Comprehensive documentation for healthcare-ai-agent"
+  },
+  "analysis_time": 13.17371678352356,
+  "summary": {
+    "total_files": 30,
+    "backend_files": 16,
+    "total_apis": 20,
+    "total_functions": 107,
+    "languages": [
+      "javascript",
+      "python"
+    ]
+  },
+  "backend_files": [
+    {
+      "file_path": "ambulance.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "api_count": 3,
+      "function_count": 4,
+      "lines_of_code": 167,
+      "dependencies": [
+        "requests",
+        "CORS",
+        "flask",
+        "logging",
+        "load_dotenv",
+        "AetherCare",
+        "flask_cors",
+        "dotenv",
+        "Flask"
+      ],
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 27,
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-ambulance-services",
+          "function": "get_nearby_ambulance_services",
+          "line": 31,
+          "description": "Flask route for POST requests to /nearby-ambulance-services",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/call-ambulance",
+          "function": "call_ambulance",
+          "line": 102,
+          "description": "Flask route for POST requests to /call-ambulance",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "normalize_phone_number",
+          "params": [
+            "number"
+          ],
+          "line": 19,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 28,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_ambulance_services",
+          "params": [],
+          "line": 32,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "call_ambulance",
+          "params": [],
+          "line": 103,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "chatbot.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "api_count": 3,
+      "function_count": 4,
+      "lines_of_code": 224,
+      "dependencies": [
+        "CORS",
+        "flask",
+        "Groq",
+        "load_model",
+        "load_dotenv",
+        "Assistant",
+        "PubmedTools",
+        "img_to_array",
+        "phi",
+        "flask_cors",
+        "numpy",
+        "dotenv",
+        "PIL",
+        "tensorflow",
+        "Image",
+        "Flask"
+      ],
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 103,
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/chat",
+          "function": "chat",
+          "line": 107,
+          "description": "Flask route for POST requests to /chat",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/classify",
+          "function": "classify_endpoint",
+          "line": 173,
+          "description": "Flask route for POST requests to /classify",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "process_image",
+          "params": [
+            "file"
+          ],
+          "line": 78,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 104,
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "chat",
+          "params": [],
+          "line": 108,
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "classify_endpoint",
+          "params": [],
+          "line": 174,
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "document.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "api_count": 2,
+      "function_count": 8,
+      "lines_of_code": 243,
+      "dependencies": [
+        "PDF",
+        "tempfile",
+        "pdfplumber",
+        "PIL",
+        "documents",
+        "Flask",
+        "flask",
+        "logging",
+        "flask_cors",
+        "DOCX",
+        "List",
+        "spacy",
+        "crewai",
+        "Agent",
+        "load_dotenv",
+        "pytesseract",
+        "docx",
+        "typing",
+        "rule",
+        "Image",
+        "CORS",
+        "TXT",
+        "medical",
+        "document",
+        "dotenv",
+        "image"
+      ],
+      "apis": [
+        {
+          "method": "POST",
+          "path": "/diagnosis",
+          "function": "process_diagnosis",
+          "line": 161,
+          "description": "Flask route for POST requests to /diagnosis",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/test",
+          "function": "test",
+          "line": 248,
+          "description": "Flask route for GET requests to /test",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "__init__",
+          "params": [
+            "self"
+          ],
+          "line": 38,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "extract_text",
+          "params": [
+            "self",
+            "file_path"
+          ],
+          "line": 40,
+          "return_type": "str",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "preprocess_text",
+          "params": [
+            "self",
+            "text"
+          ],
+          "line": 66,
+          "return_type": "str",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "rule_based_extraction",
+          "params": [
+            "text"
+          ],
+          "line": 76,
+          "return_type": "Dict[str, List[str]]",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "create_analysis_task",
+          "params": [
+            "text"
+          ],
+          "line": 128,
+          "return_type": "Task",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "create_summary_task",
+          "params": [
+            "analysis_output",
+            "Any]"
+          ],
+          "line": 148,
+          "return_type": "Task",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "process_diagnosis",
+          "params": [],
+          "line": 162,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "test",
+          "params": [],
+          "line": 249,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "location.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "api_count": 4,
+      "function_count": 9,
+      "lines_of_code": 273,
+      "dependencies": [
+        "requests",
+        "CORS",
+        "math",
+        "flask",
+        "load_dotenv",
+        "flask_cors",
+        "dotenv",
+        "Flask",
+        "user"
+      ],
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "line": 82,
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/specializations",
+          "function": "get_specializations",
+          "line": 93,
+          "description": "Flask route for GET requests to /specializations",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-doctors",
+          "function": "get_nearby_doctors",
+          "line": 120,
+          "description": "Flask route for POST requests to /nearby-doctors",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/doctor-details/<place_id>",
+          "function": "get_doctor_details",
+          "line": 278,
+          "description": "Flask route for GET requests to /doctor-details/<place_id>",
+          "parameters": [
+            {
+              "name": "place_id",
+              "type": "path",
+              "required": true,
+              "description": "Path parameter place_id"
+            }
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "calculate_distance",
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ],
+          "line": 15,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\"Calculate distance between two points using Haversine formula\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_place_details",
+          "params": [
+            "place_id"
+          ],
+          "line": 31,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Get detailed information about a place\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "sort_doctors",
+          "params": [
+            "doctors",
+            "sort_by",
+            "user_lat=None",
+            "user_lng=None"
+          ],
+          "line": 49,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Sort doctors based on the specified criteria\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "line": 83,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_specializations",
+          "params": [],
+          "line": 94,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\"Return list of medical specializations\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_doctors",
+          "params": [],
+          "line": 121,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_doctor_details",
+          "params": [
+            "place_id"
+          ],
+          "line": 279,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Get detailed information about a specific doctor/clinic\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "not_found",
+          "params": [
+            "error"
+          ],
+          "line": 297,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "internal_error",
+          "params": [
+            "error"
+          ],
+          "line": 301,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "server.js",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "api_count": 0,
+      "function_count": 0,
+      "lines_of_code": 92,
+      "dependencies": [],
+      "apis": [],
+      "functions": []
+    },
+    {
+      "file_path": "yoga.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "api_count": 4,
+      "function_count": 8,
+      "lines_of_code": 286,
+      "dependencies": [
+        "CORS",
+        "math",
+        "flask",
+        "defaultdict",
+        "mediapipe",
+        "collections",
+        "webcam",
+        "flask_cors",
+        "numpy",
+        "socket",
+        "cv2",
+        "Flask"
+      ],
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/video_feed",
+          "function": "video_feed",
+          "line": 245,
+          "description": "Flask route for GET requests to /video_feed",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/update_session",
+          "function": "update_session",
+          "line": 253,
+          "description": "Flask route for POST requests to /update_session",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/reset_session",
+          "function": "reset_session",
+          "line": 282,
+          "description": "Flask route for POST requests to /reset_session",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/health",
+          "function": "health_check",
+          "line": 301,
+          "description": "Flask route for GET requests to /health",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "detectPose",
+          "params": [
+            "image",
+            "pose"
+          ],
+          "line": 31,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "calculateAngle",
+          "params": [
+            "landmark1",
+            "landmark2",
+            "landmark3"
+          ],
+          "line": 58,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "classifyPose",
+          "params": [
+            "landmarks",
+            "output_image"
+          ],
+          "line": 72,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "webcam_feed",
+          "params": [],
+          "line": 175,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "video_feed",
+          "params": [],
+          "line": 246,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "update_session",
+          "params": [],
+          "line": 254,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "reset_session",
+          "params": [],
+          "line": 283,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": true
+        },
+        {
+          "name": "health_check",
+          "params": [],
+          "line": 302,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "pages\\api\\send-email.js",
+      "language": "javascript",
+      "file_purpose": "API Routes and Controllers",
+      "api_count": 4,
+      "function_count": 0,
+      "lines_of_code": 39,
+      "dependencies": [
+        "nodemailer"
+      ],
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3,
+          "description": "Next.js API route handler for GET requests",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3,
+          "description": "Next.js API route handler for POST requests",
+          "parameters": []
+        },
+        {
+          "method": "PUT",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3,
+          "description": "Next.js API route handler for PUT requests",
+          "parameters": []
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/send-email",
+          "function": "handler",
+          "line": 3,
+          "description": "Next.js API route handler for DELETE requests",
+          "parameters": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "file_path": "src\\app\\firebase-config.js",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "api_count": 0,
+      "function_count": 0,
+      "lines_of_code": 17,
+      "dependencies": [
+        "firebase"
+      ],
+      "apis": [],
+      "functions": []
+    },
+    {
+      "file_path": "src\\app\\about\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 2,
+      "lines_of_code": 202,
+      "dependencies": [
+        "framer-motion",
+        "@",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "About",
+          "params": [],
+          "line": 7,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "line": 18,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\appointment\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 5,
+      "lines_of_code": 666,
+      "dependencies": [
+        "@",
+        "next",
+        "react",
+        "firebase"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "BookAppointment",
+          "params": [],
+          "line": 12,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSubmit",
+          "params": [
+            "e"
+          ],
+          "line": 96,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "getFilteredAppointments",
+          "params": [],
+          "line": 152,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "// Filter appointments based on search and filters",
+          "is_api_handler": false
+        },
+        {
+          "name": "getStatusIcon",
+          "params": [
+            "status"
+          ],
+          "line": 186,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "getModeIcon",
+          "params": [
+            "mode"
+          ],
+          "line": 221,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\diagnosis\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 12,
+      "lines_of_code": 615,
+      "dependencies": [
+        "react-textarea-autosize",
+        "jspdf",
+        "firebase",
+        "framer-motion",
+        "@",
+        "remark-gfm",
+        "axios",
+        "react-markdown",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "Diagnosis",
+          "params": [],
+          "line": 26,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleRecording",
+          "params": [],
+          "line": 91,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "speakText",
+          "params": [
+            "text",
+            "index"
+          ],
+          "line": 124,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakInput",
+          "params": [],
+          "line": 175,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakMessage",
+          "params": [
+            "content",
+            "index"
+          ],
+          "line": 190,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "load",
+          "params": [],
+          "line": 211,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "onScroll",
+          "params": [],
+          "line": 236,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "scrollToBottom",
+          "params": [],
+          "line": 243,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "startNewChat",
+          "params": [
+            "firebaseDb",
+            "u"
+          ],
+          "line": 267,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSendMessage",
+          "params": [
+            "overrideText"
+          ],
+          "line": 275,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleDocumentUpload",
+          "params": [
+            "e"
+          ],
+          "line": 355,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "generatePDFReport",
+          "params": [
+            "name",
+            "email",
+            "dob",
+            "diag",
+            "conf"
+          ],
+          "line": 419,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\login\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 5,
+      "lines_of_code": 565,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "firebase",
+        "crypto-js",
+        "@",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "Login",
+          "params": [],
+          "line": 21,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSignUp",
+          "params": [
+            "e"
+          ],
+          "line": 74,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleLogin",
+          "params": [
+            "e"
+          ],
+          "line": 105,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleGoogle",
+          "params": [],
+          "line": 142,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleExtraInfo",
+          "params": [
+            "e"
+          ],
+          "line": 177,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\profile\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 3,
+      "lines_of_code": 305,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "firebase",
+        "@",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "ProfilePage",
+          "params": [],
+          "line": 22,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "// Register GSAP ScrollTrigger",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleChange",
+          "params": [
+            "e"
+          ],
+          "line": 122,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSave",
+          "params": [],
+          "line": 126,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 2,
+      "lines_of_code": 53,
+      "dependencies": [
+        "next",
+        "react",
+        "uuid"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "Home",
+          "params": [],
+          "line": 9,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "createRoom",
+          "params": [],
+          "line": 13,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\[roomId]\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 10,
+      "lines_of_code": 491,
+      "dependencies": [
+        "socket.io-client",
+        "react-icons",
+        "@",
+        "peerjs",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "Room",
+          "params": [],
+          "line": 22,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "debugLog",
+          "params": [
+            "message"
+          ],
+          "line": 43,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "// Debug logging function",
+          "is_api_handler": false
+        },
+        {
+          "name": "connectToNewUser",
+          "params": [
+            "userId",
+            "stream"
+          ],
+          "line": 242,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "addVideoStream",
+          "params": [
+            "video",
+            "stream",
+            "id",
+            "isLocal"
+          ],
+          "line": 260,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "removeVideo",
+          "params": [
+            "id"
+          ],
+          "line": 322,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleAudio",
+          "params": [],
+          "line": 330,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleVideo",
+          "params": [],
+          "line": 338,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "shareLink",
+          "params": [],
+          "line": 346,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "endCall",
+          "params": [],
+          "line": 352,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "formatTime",
+          "params": [
+            "sec"
+          ],
+          "line": 358,
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    {
+      "file_path": "src\\components\\homepage.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "api_count": 0,
+      "function_count": 3,
+      "lines_of_code": 116,
+      "dependencies": [
+        "firebase",
+        "framer-motion",
+        "@",
+        "react-simple-typewriter",
+        "next",
+        "react"
+      ],
+      "apis": [],
+      "functions": [
+        {
+          "name": "Homepage",
+          "params": [],
+          "line": 12,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleScroll",
+          "params": [],
+          "line": 18,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "line": 41,
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    }
+  ],
+  "api_documentation": {
+    "ambulance.py": {
+      "comprehensive_documentation": "**Ambulance API Documentation**\n\n**FILE_OVERVIEW**\n\n### Purpose and Role\n\nThe `ambulance.py` file implements a RESTful API for ambulance services, providing endpoints for users to find nearby ambulance services and call for emergency assistance. The API is designed to be scalable, secure, and easy to integrate with various frontend applications.\n\n### Architecture Context and Relationships\n\nThe API is built using the Flask web framework and utilizes the Google Maps API for geolocation services. The API has three main endpoints:\n\n1. `/`: A simple welcome page.\n2. `/nearby-ambulance-services`: A POST endpoint that takes user input (latitude, longitude, and text) to find nearby ambulance services.\n3. `/call-ambulance`: A POST endpoint that takes user input (name, phone number, override phone number, confirmation, latitude, and longitude) to call for emergency assistance.\n\n### Key Responsibilities and Functionality\n\nThe API is responsible for:\n\n1. Handling user input for nearby ambulance services and emergency assistance.\n2. Validating user input for correctness and security.\n3. Integrating with the Google Maps API for geolocation services.\n4. Providing a secure and scalable API for frontend applications.\n\n**API_DOCUMENTATION**\n\n### GET /\n\n#### Purpose and Business Logic\n\nThe `/` endpoint is a simple welcome page that returns a \"Welcome to the ambulance API\" message.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| None | None | None | N/A |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: GET\n* URL: `/`\n* Headers: None\n* Body: None\n\n**Response**\n\n* Status Code: 200 OK\n* Response Body: \"Welcome to the ambulance API\"\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\nNone\n\n#### Rate Limiting and Usage Guidelines\n\nNone\n\n#### Integration Examples\n\n```javascript\nfetch('/').then(response => response.text()).then(text => console.log(text));\n```\n\n### POST /nearby-ambulance-services\n\n#### Purpose and Business Logic\n\nThe `/nearby-ambulance-services` endpoint takes user input (latitude, longitude, and text) to find nearby ambulance services. It uses the Google Maps API to retrieve the nearest ambulance services.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| lat | float | Latitude of the user's location | Yes |\n| lng | float | Longitude of the user's location | Yes |\n| text | string | Text to search for nearby ambulance services | Yes |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: POST\n* URL: `/nearby-ambulance-services`\n* Headers: `Content-Type: application/json`\n* Body: `{\"lat\": 37.7749, \"lng\": -122.4194, \"text\": \"ambulance services in San Francisco\"}`\n\n**Response**\n\n* Status Code: 200 OK\n* Response Body: JSON object containing nearby ambulance services\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\n* `400 Bad Request`: Invalid user input\n* `500 Internal Server Error`: Google Maps API error\n\n#### Rate Limiting and Usage Guidelines\n\n* 100 requests per minute\n* Do not use this endpoint for commercial purposes without permission\n\n#### Integration Examples\n\n```javascript\nfetch('/nearby-ambulance-services', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ lat: 37.7749, lng: -122.4194, text: 'ambulance services in San Francisco' }),\n}).then(response => response.json()).then(data => console.log(data));\n```\n\n### POST /call-ambulance\n\n#### Purpose and Business Logic\n\nThe `/call-ambulance` endpoint takes user input (name, phone number, override phone number, confirmation, latitude, and longitude) to call for emergency assistance.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| name | string | Name of the person calling for assistance | Yes |\n| phone_number | string | Phone number of the person calling for assistance | Yes |\n| override_phone_number | string | Override phone number for emergency assistance | No |\n| confirm | boolean | Confirmation of the emergency assistance | No |\n| lat | float | Latitude of the user's location | Yes |\n| lng | float | Longitude of the user's location | Yes |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: POST\n* URL: `/call-ambulance`\n* Headers: `Content-Type: application/json`\n* Body: `{\"name\": \"John Doe\", \"phone_number\": \"1234567890\", \"lat\": 37.7749, \"lng\": -122.4194}`\n\n**Response**\n\n* Status Code: 200 OK\n* Response Body: JSON object containing the emergency assistance details\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\n* `400 Bad Request`: Invalid user input\n* `500 Internal Server Error`: Database error\n\n#### Rate Limiting and Usage Guidelines\n\n* 100 requests per minute\n* Do not use this endpoint for commercial purposes without permission\n\n#### Integration Examples\n\n```javascript\nfetch('/call-ambulance', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ name: 'John Doe', phone_number: '1234567890', lat: 37.7749, lng: -122.4194 }),\n}).then(response => response.json()).then(data => console.log(data));\n```\n\n**FUNCTION_DOCUMENTATION**\n\n### normalize_phone_number(number)\n\n#### Purpose and Algorithm Description\n\nThe `normalize_phone_number` function takes a phone number as input and returns a normalized phone number in the format `+91xxxxxxxxxx`.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| number | string | Phone number to normalize | Yes |\n\n#### Return Value Documentation\n\n| Return Value | Type | Description |\n| --- | --- | --- |\n| normalized_phone_number | string | Normalized phone number in the format `+91xxxxxxxxxx` |\n\n#### Usage Examples\n\n```python\nprint(normalize_phone_number('1234567890'))  # Output: +911234567890\nprint(normalize_phone_number('+91 1234567890'))  # Output: +911234567890\n```\n\n#### Error Handling\n\nNone\n\n#### Performance Considerations\n\nThis function is designed to be lightweight and efficient, with a time complexity of O(1).\n\n### home()\n\n#### Purpose and Algorithm Description\n\nThe `home` function returns a simple welcome message.\n\n#### Parameter Documentation\n\nNone\n\n#### Return Value Documentation\n\n| Return Value | Type | Description |\n| --- | --- | --- |\n| welcome_message | string | Welcome message |\n\n#### Usage Examples\n\n```python\nprint(home())  # Output: Welcome to the ambulance API\n```\n\n#### Error Handling\n\nNone\n\n#### Performance Considerations\n\nThis function is designed to be lightweight and efficient, with a time complexity of O(1).\n\n### get_nearby_ambulance_services()\n\n#### Purpose and Algorithm Description\n\nThe `get_nearby_ambulance_services` function takes user input (latitude, longitude, and text) to find nearby ambulance services. It uses the Google Maps API to retrieve the nearest ambulance services.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| lat | float | Latitude of the user's location | Yes |\n| lng | float | Longitude of the user's location | Yes |\n| text | string | Text to search for nearby ambulance services | Yes |\n\n#### Return Value Documentation\n\n| Return Value | Type | Description |\n| --- | --- | --- |\n| nearby_ambulance_services | JSON object | Nearby ambulance services |\n\n#### Usage Examples\n\n```python\nprint(get_nearby_ambulance_services(lat=37.7749, lng=-122.4194, text='ambulance services in San Francisco'))\n```\n\n#### Error Handling\n\n* `400 Bad Request`: Invalid user input\n* `500 Internal Server Error`: Google Maps API error\n\n#### Performance Considerations\n\nThis function is designed to be efficient, with a time complexity of O(1). However, it may take some time to retrieve the nearby ambulance services from the Google Maps API.\n\n### call_ambulance()\n\n#### Purpose and Algorithm Description\n\nThe `call_ambulance` function takes user input (name, phone number, override phone number, confirmation, latitude, and longitude) to call for emergency assistance.\n\n#### Parameter Documentation\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| name | string | Name of the person calling for assistance | Yes |\n| phone_number | string | Phone number of the person calling for assistance | Yes |\n| override_phone_number | string | Override phone number for emergency assistance | No |\n| confirm | boolean | Confirmation of the emergency assistance | No |\n| lat | float | Latitude of the user's location | Yes |\n| lng | float | Longitude of the user's location | Yes |\n\n#### Return Value Documentation\n\n| Return Value | Type | Description |\n| --- | --- | --- |\n| emergency_assistance_details | JSON object | Emergency assistance details |\n\n#### Usage Examples\n\n```python\nprint(call_ambulance(name='John Doe', phone_number='1234567890', lat=37.7749, lng=-122.4194))\n```\n\n#### Error Handling\n\n* `400 Bad Request`: Invalid user input\n* `500 Internal Server Error`: Database error\n\n#### Performance Considerations\n\nThis",
+      "file_analysis": {
+        "purpose": "API Implementation",
+        "api_count": 3,
+        "function_count": 4,
+        "language": "python",
+        "lines_of_code": 167,
+        "dependencies": [
+          "requests",
+          "CORS",
+          "flask",
+          "logging",
+          "load_dotenv",
+          "AetherCare",
+          "flask_cors",
+          "dotenv",
+          "Flask"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-ambulance-services",
+          "function": "get_nearby_ambulance_services",
+          "description": "Flask route for POST requests to /nearby-ambulance-services",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/call-ambulance",
+          "function": "call_ambulance",
+          "description": "Flask route for POST requests to /call-ambulance",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "normalize_phone_number",
+          "params": [
+            "number"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_ambulance_services",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "call_ambulance",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "chatbot.py": {
+      "comprehensive_documentation": "**FILE_OVERVIEW**\n\n### Purpose and Role\n\nThe `chatbot.py` file is a Python implementation of a RESTful API that provides a chatbot functionality. The API allows users to interact with the chatbot through two main endpoints: `/chat` and `/classify`. The `/chat` endpoint enables users to have a conversation with the chatbot, while the `/classify` endpoint allows users to classify text inputs.\n\n### Architecture Context and Relationships\n\nThe API is built using the Flask web framework and utilizes the Groq library for natural language processing (NLP) tasks. The API also relies on several dependencies, including CORS, PubmedTools, and img_to_array, to provide additional functionality.\n\n### Key Responsibilities and Functionality\n\nThe API's key responsibilities include:\n\n* Providing a chatbot functionality through the `/chat` endpoint\n* Classifying text inputs through the `/classify` endpoint\n* Handling user input and generating responses\n* Utilizing NLP techniques to analyze and understand user input\n\n**API_DOCUMENTATION**\n\n### GET /\n\n#### Purpose and Business Logic\n\nThe `/` endpoint is the API's home page, providing a welcome message and instructions on how to use the API.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| None |  |  |  |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: GET\n* URL: `/`\n* Response:\n\n```json\n{\n  \"message\": \"Welcome to the Diagnosis API. Please POST your data to /chat or /classify.\"\n}\n```\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\n* 200 OK: Successful response\n* 400 Bad Request: Invalid request\n\n#### Rate Limiting and Usage Guidelines\n\nNone\n\n#### Integration Examples\n\n```javascript\nfetch('/').then(response => response.json()).then(data => console.log(data));\n```\n\n### POST /chat\n\n#### Purpose and Business Logic\n\nThe `/chat` endpoint enables users to have a conversation with the chatbot. The chatbot will respond to user input based on its understanding of the conversation.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| message | string | User input | Yes |\n| history | string | Conversation history | No |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: POST\n* URL: `/chat`\n* Body:\n\n```json\n{\n  \"message\": \"Hello, how are you?\",\n  \"history\": \"[{\\\"content\\\": \\\"Hello\\\"}]\"\n}\n```\n\n**Response**\n\n```json\n{\n  \"response\": \"I'm doing well, thank you for asking!\",\n  \"conversation_history\": \"[{\\\"content\\\": \\\"Hello\\\"}, {\\\"content\\\": \\\"I'm doing well, thank you for asking!\\\"}]\"\n}\n```\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\n* 200 OK: Successful response\n* 400 Bad Request: Invalid request\n* 500 Internal Server Error: Server error\n\n#### Rate Limiting and Usage Guidelines\n\nNone\n\n#### Integration Examples\n\n```javascript\nfetch('/chat', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({\n    message: 'Hello, how are you?',\n    history: '[{\"content\": \"Hello\"}]'\n  })\n}).then(response => response.json()).then(data => console.log(data));\n```\n\n### POST /classify\n\n#### Purpose and Business Logic\n\nThe `/classify` endpoint allows users to classify text inputs. The chatbot will analyze the input and provide a classification based on its understanding.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| message | string | User input | Yes |\n| history | string | Conversation history | No |\n\n#### Request/Response Examples\n\n**Request**\n\n* Method: POST\n* URL: `/classify`\n* Body:\n\n```json\n{\n  \"message\": \"This is a test message\",\n  \"history\": \"[{\\\"content\\\": \\\"Hello\\\"}]\"\n}\n```\n\n**Response**\n\n```json\n{\n  \"classification\": \"Test message\",\n  \"conversation_history\": \"[{\\\"content\\\": \\\"Hello\\\"}, {\\\"content\\\": \\\"This is a test message\\\"}]\"\n}\n```\n\n#### Authentication and Authorization Requirements\n\nNone\n\n#### Error Handling\n\n* 200 OK: Successful response\n* 400 Bad Request: Invalid request\n* 500 Internal Server Error: Server error\n\n#### Rate Limiting and Usage Guidelines\n\nNone\n\n#### Integration Examples\n\n```javascript\nfetch('/classify', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({\n    message: 'This is a test message',\n    history: '[{\"content\": \"Hello\"}]'\n  })\n}).then(response => response.json()).then(data => console.log(data));\n```\n\n**FUNCTION_DOCUMENTATION**\n\n### process_image(file)\n\n#### Purpose and Algorithm Description\n\nThe `process_image` function takes an image file as input and processes it for use in the chatbot's NLP tasks.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| file | string | Image file path | Yes |\n\n#### Return Value\n\nThe function returns the processed image array.\n\n#### Usage Examples\n\n```python\nimage_array = process_image('image.jpg')\n```\n\n#### Error Handling\n\n* None\n\n#### Performance Considerations\n\nThe function uses the `img_to_array` function to convert the image to an array, which may be computationally expensive for large images.\n\n### home()\n\n#### Purpose and Algorithm Description\n\nThe `home` function returns a welcome message and instructions on how to use the API.\n\n#### Parameters\n\nNone\n\n#### Return Value\n\nThe function returns a string containing the welcome message.\n\n#### Usage Examples\n\n```python\nprint(home())\n```\n\n#### Error Handling\n\n* None\n\n#### Performance Considerations\n\nThe function is a simple string return, so it has minimal performance considerations.\n\n### chat()\n\n#### Purpose and Algorithm Description\n\nThe `chat` function handles user input and generates responses based on the chatbot's understanding of the conversation.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| message | string | User input | Yes |\n| history | string | Conversation history | No |\n\n#### Return Value\n\nThe function returns a dictionary containing the response and conversation history.\n\n#### Usage Examples\n\n```python\nresponse = chat('Hello, how are you?')\nprint(response)\n```\n\n#### Error Handling\n\n* 200 OK: Successful response\n* 400 Bad Request: Invalid request\n* 500 Internal Server Error: Server error\n\n#### Performance Considerations\n\nThe function uses the `Groq` library for NLP tasks, which may be computationally expensive for large inputs.\n\n### classify_endpoint()\n\n#### Purpose and Algorithm Description\n\nThe `classify_endpoint` function allows users to classify text inputs. The chatbot will analyze the input and provide a classification based on its understanding.\n\n#### Parameters\n\n| Parameter | Type | Description | Required |\n| --- | --- | --- | --- |\n| message | string | User input | Yes |\n| history | string | Conversation history | No |\n\n#### Return Value\n\nThe function returns a dictionary containing the classification and conversation history.\n\n#### Usage Examples\n\n```python\nresponse = classify_endpoint('This is a test message')\nprint(response)\n```\n\n#### Error Handling\n\n* 200 OK: Successful response\n* 400 Bad Request: Invalid request\n* 500 Internal Server Error: Server error\n\n#### Performance Considerations\n\nThe function uses the `Groq` library for NLP tasks, which may be computationally expensive for large inputs.\n\n**SETUP_AND_DEPLOYMENT**\n\n### Environment Setup Instructions\n\n1. Install the required dependencies using pip: `pip install -r requirements.txt`\n2. Set up the environment variables in the `.env` file\n3. Run the API using `python chatbot.py`\n\n### Required Dependencies\n\n* Flask\n* Groq\n* CORS\n* PubmedTools\n* img_to_array\n\n### Environment Variables\n\n* `API_KEY`: API key for the Groq library\n* `DATABASE_URL`: URL for the database\n\n### Database Setup and Configuration\n\n1. Create a database using a tool like PostgreSQL\n2. Configure the database URL in the `.env` file\n\n### Step-by-Step Deployment Instructions\n\n1. Deploy the API to a cloud platform like Heroku\n2. Configure the environment variables in the cloud platform\n3. Run the API using the cloud platform's deployment tool\n\n### Docker Configuration\n\n1. Create a Dockerfile for the API\n2. Build the Docker image using `docker build -t chatbot .`\n3. Run the Docker container using `docker run -p 5000:5000 chatbot`\n\n### Testing Instructions\n\n1. Run the API using `python chatbot.py`\n2. Use a tool like Postman to test the API endpoints\n3. Verify that the API is working correctly by checking the response codes and data\n\n**USAGE_EXAMPLES**\n\n### cURL Commands\n\n* `curl http://localhost:5000/`: Test the `/` endpoint\n* `curl -X POST -H \"Content-Type: application/json\" -d '{\"message\": \"Hello, how are you?\", \"history\": \"[{\\\"content\\\": \\\"Hello\\\"}]\"}' http://localhost:5000/chat`: Test the `/chat` endpoint\n* `curl -X POST -H \"Content-Type: application/json\" -d '{\"message\": \"This is a test message\", \"history\": \"[{\\\"content\\\": \\\"Hello\\\"}]\"}' http://localhost:5000/classify`: Test the `/classify",
+      "file_analysis": {
+        "purpose": "API Implementation",
+        "api_count": 3,
+        "function_count": 4,
+        "language": "python",
+        "lines_of_code": 224,
+        "dependencies": [
+          "CORS",
+          "flask",
+          "Groq",
+          "load_model",
+          "load_dotenv",
+          "Assistant",
+          "PubmedTools",
+          "img_to_array",
+          "phi",
+          "flask_cors",
+          "numpy",
+          "dotenv",
+          "PIL",
+          "tensorflow",
+          "Image",
+          "Flask"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/chat",
+          "function": "chat",
+          "description": "Flask route for POST requests to /chat",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/classify",
+          "function": "classify_endpoint",
+          "description": "Flask route for POST requests to /classify",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "process_image",
+          "params": [
+            "file"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "chat",
+          "params": [],
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "classify_endpoint",
+          "params": [],
+          "return_type": "",
+          "complexity": "High",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "document.py": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5994, Requested 1829. Please try again in 18.23s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "API Implementation",
+        "api_count": 2,
+        "function_count": 8,
+        "language": "python",
+        "lines_of_code": 243,
+        "dependencies": [
+          "PDF",
+          "tempfile",
+          "pdfplumber",
+          "PIL",
+          "documents",
+          "Flask",
+          "flask",
+          "logging",
+          "flask_cors",
+          "DOCX",
+          "List",
+          "spacy",
+          "crewai",
+          "Agent",
+          "load_dotenv",
+          "pytesseract",
+          "docx",
+          "typing",
+          "rule",
+          "Image",
+          "CORS",
+          "TXT",
+          "medical",
+          "document",
+          "dotenv",
+          "image"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "POST",
+          "path": "/diagnosis",
+          "function": "process_diagnosis",
+          "description": "Flask route for POST requests to /diagnosis",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/test",
+          "function": "test",
+          "description": "Flask route for GET requests to /test",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "__init__",
+          "params": [
+            "self"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "extract_text",
+          "params": [
+            "self",
+            "file_path"
+          ],
+          "return_type": "str",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "preprocess_text",
+          "params": [
+            "self",
+            "text"
+          ],
+          "return_type": "str",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "rule_based_extraction",
+          "params": [
+            "text"
+          ],
+          "return_type": "Dict[str, List[str]]",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "create_analysis_task",
+          "params": [
+            "text"
+          ],
+          "return_type": "Task",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "create_summary_task",
+          "params": [
+            "analysis_output",
+            "Any]"
+          ],
+          "return_type": "Task",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "process_diagnosis",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "test",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "location.py": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5987, Requested 2106. Please try again in 20.93s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "API Implementation",
+        "api_count": 4,
+        "function_count": 9,
+        "language": "python",
+        "lines_of_code": 273,
+        "dependencies": [
+          "requests",
+          "CORS",
+          "math",
+          "flask",
+          "load_dotenv",
+          "flask_cors",
+          "dotenv",
+          "Flask",
+          "user"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/",
+          "function": "home",
+          "description": "Flask route for GET requests to /",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/specializations",
+          "function": "get_specializations",
+          "description": "Flask route for GET requests to /specializations",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/nearby-doctors",
+          "function": "get_nearby_doctors",
+          "description": "Flask route for POST requests to /nearby-doctors",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/doctor-details/<place_id>",
+          "function": "get_doctor_details",
+          "description": "Flask route for GET requests to /doctor-details/<place_id>",
+          "parameters": [
+            {
+              "name": "place_id",
+              "type": "path",
+              "required": true,
+              "description": "Path parameter place_id"
+            }
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "calculate_distance",
+          "params": [
+            "lat1",
+            "lng1",
+            "lat2",
+            "lng2"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\"Calculate distance between two points using Haversine formula\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_place_details",
+          "params": [
+            "place_id"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Get detailed information about a place\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "sort_doctors",
+          "params": [
+            "doctors",
+            "sort_by",
+            "user_lat=None",
+            "user_lng=None"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Sort doctors based on the specified criteria\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "home",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_specializations",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\"Return list of medical specializations\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_nearby_doctors",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "get_doctor_details",
+          "params": [
+            "place_id"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\"Get detailed information about a specific doctor/clinic\"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "not_found",
+          "params": [
+            "error"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "internal_error",
+          "params": [
+            "error"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "yoga.py": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5981, Requested 1881. Please try again in 18.62s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "API Implementation",
+        "api_count": 4,
+        "function_count": 8,
+        "language": "python",
+        "lines_of_code": 286,
+        "dependencies": [
+          "CORS",
+          "math",
+          "flask",
+          "defaultdict",
+          "mediapipe",
+          "collections",
+          "webcam",
+          "flask_cors",
+          "numpy",
+          "socket",
+          "cv2",
+          "Flask"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/video_feed",
+          "function": "video_feed",
+          "description": "Flask route for GET requests to /video_feed",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/update_session",
+          "function": "update_session",
+          "description": "Flask route for POST requests to /update_session",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/reset_session",
+          "function": "reset_session",
+          "description": "Flask route for POST requests to /reset_session",
+          "parameters": []
+        },
+        {
+          "method": "GET",
+          "path": "/health",
+          "function": "health_check",
+          "description": "Flask route for GET requests to /health",
+          "parameters": []
+        }
+      ],
+      "functions": [
+        {
+          "name": "detectPose",
+          "params": [
+            "image",
+            "pose"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "calculateAngle",
+          "params": [
+            "landmark1",
+            "landmark2",
+            "landmark3"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "classifyPose",
+          "params": [
+            "landmarks",
+            "output_image"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "webcam_feed",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "video_feed",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "update_session",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        },
+        {
+          "name": "reset_session",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": true
+        },
+        {
+          "name": "health_check",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "\"\"\" \"\"\"",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "pages\\api\\send-email.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5976, Requested 913. Please try again in 8.89s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "API Routes and Controllers",
+        "api_count": 4,
+        "function_count": 0,
+        "language": "javascript",
+        "lines_of_code": 39,
+        "dependencies": [
+          "nodemailer"
+        ],
+        "is_backend": true
+      },
+      "apis": [
+        {
+          "method": "GET",
+          "path": "/api/send-email",
+          "function": "handler",
+          "description": "Next.js API route handler for GET requests",
+          "parameters": []
+        },
+        {
+          "method": "POST",
+          "path": "/api/send-email",
+          "function": "handler",
+          "description": "Next.js API route handler for POST requests",
+          "parameters": []
+        },
+        {
+          "method": "PUT",
+          "path": "/api/send-email",
+          "function": "handler",
+          "description": "Next.js API route handler for PUT requests",
+          "parameters": []
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/send-email",
+          "function": "handler",
+          "description": "Next.js API route handler for DELETE requests",
+          "parameters": []
+        }
+      ],
+      "functions": []
+    },
+    "src\\app\\layout.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5970, Requested 571. Please try again in 5.41s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "General Purpose",
+        "api_count": 0,
+        "function_count": 1,
+        "language": "javascript",
+        "lines_of_code": 30,
+        "dependencies": [
+          "next"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "RootLayout",
+          "params": [
+            "{ children }"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5965, Requested 515. Please try again in 4.8s. Need more tokens? Upgrade to Dev Tier today at https://consol",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 1,
+        "language": "javascript",
+        "lines_of_code": 14,
+        "dependencies": [
+          "@",
+          "next"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Home",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\about\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5960, Requested 688. Please try again in 6.48s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 2,
+        "language": "javascript",
+        "lines_of_code": 202,
+        "dependencies": [
+          "framer-motion",
+          "@",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "About",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\ambulance\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5954, Requested 928. Please try again in 8.82s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 4,
+        "language": "javascript",
+        "lines_of_code": 298,
+        "dependencies": [
+          "gsap",
+          "react-icons",
+          "@",
+          "next",
+          "react"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "AmbulancePage",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "fetchServices",
+          "params": [
+            "lat",
+            "lng"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "startCall",
+          "params": [
+            "svc"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "confirmCall",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\appointment\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5949, Requested 1061. Please try again in 10.1s. Need more tokens? Upgrade to Dev Tier today at https://cons",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 5,
+        "language": "javascript",
+        "lines_of_code": 666,
+        "dependencies": [
+          "@",
+          "next",
+          "react",
+          "firebase"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "BookAppointment",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSubmit",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "getFilteredAppointments",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "// Filter appointments based on search and filters",
+          "is_api_handler": false
+        },
+        {
+          "name": "getStatusIcon",
+          "params": [
+            "status"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "getModeIcon",
+          "params": [
+            "mode"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\contact\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5944, Requested 830. Please try again in 7.74s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 4,
+        "language": "javascript",
+        "lines_of_code": 401,
+        "dependencies": [
+          "gsap",
+          "@",
+          "emailjs-com",
+          "next",
+          "react"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Contact",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleChange",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "validateForm",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSubmit",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\diagnosis\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5939, Requested 1304. Please try again in 12.43s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 12,
+        "language": "javascript",
+        "lines_of_code": 615,
+        "dependencies": [
+          "react-textarea-autosize",
+          "jspdf",
+          "firebase",
+          "framer-motion",
+          "@",
+          "remark-gfm",
+          "axios",
+          "react-markdown",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Diagnosis",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleRecording",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "speakText",
+          "params": [
+            "text",
+            "index"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakInput",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSpeakMessage",
+          "params": [
+            "content",
+            "index"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "load",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "onScroll",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "scrollToBottom",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "startNewChat",
+          "params": [
+            "firebaseDb",
+            "u"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSendMessage",
+          "params": [
+            "overrideText"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleDocumentUpload",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "generatePDFReport",
+          "params": [
+            "name",
+            "email",
+            "dob",
+            "diag",
+            "conf"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\doctor_profile\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5933, Requested 709. Please try again in 6.42s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 2,
+        "language": "javascript",
+        "lines_of_code": 327,
+        "dependencies": [
+          "gsap",
+          "react-icons",
+          "firebase",
+          "@",
+          "uuid",
+          "next",
+          "react"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "DoctorProfile",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleAction",
+          "params": [
+            "appt",
+            "action"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "// Accept / Reject",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\location_docs\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5927, Requested 1107. Please try again in 10.34s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 6,
+        "language": "javascript",
+        "lines_of_code": 574,
+        "dependencies": [
+          "@",
+          "gsap",
+          "next",
+          "react"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "loadGoogleMapsScript",
+          "params": [
+            "callback"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "NearbyDoctors",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "clearMarkers",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "fetchDoctors",
+          "params": [
+            "lat",
+            "lng",
+            "text"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSearch",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "showOnMap",
+          "params": [
+            "doctor"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\login\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5922, Requested 961. Please try again in 8.83s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 5,
+        "language": "javascript",
+        "lines_of_code": 565,
+        "dependencies": [
+          "gsap",
+          "react-icons",
+          "firebase",
+          "crypto-js",
+          "@",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Login",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSignUp",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleLogin",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleGoogle",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleExtraInfo",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\profile\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5916, Requested 793. Please try again in 7.09s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 3,
+        "language": "javascript",
+        "lines_of_code": 305,
+        "dependencies": [
+          "gsap",
+          "react-icons",
+          "firebase",
+          "@",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "ProfilePage",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "// Register GSAP ScrollTrigger",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleChange",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSave",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\room\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5911, Requested 635. Please try again in 5.46s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 2,
+        "language": "javascript",
+        "lines_of_code": 53,
+        "dependencies": [
+          "next",
+          "react",
+          "uuid"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Home",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "createRoom",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\room\\[roomId]\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5906, Requested 1340. Please try again in 12.46s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 10,
+        "language": "javascript",
+        "lines_of_code": 491,
+        "dependencies": [
+          "socket.io-client",
+          "react-icons",
+          "@",
+          "peerjs",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Room",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "debugLog",
+          "params": [
+            "message"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "// Debug logging function",
+          "is_api_handler": false
+        },
+        {
+          "name": "connectToNewUser",
+          "params": [
+            "userId",
+            "stream"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "addVideoStream",
+          "params": [
+            "video",
+            "stream",
+            "id",
+            "isLocal"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "removeVideo",
+          "params": [
+            "id"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleAudio",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "toggleVideo",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "shareLink",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "endCall",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "formatTime",
+          "params": [
+            "sec"
+          ],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\app\\yoga\\page.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5900, Requested 1343. Please try again in 12.43s. Need more tokens? Upgrade to Dev Tier today at https://con",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 10,
+        "language": "javascript",
+        "lines_of_code": 432,
+        "dependencies": [
+          "@",
+          "next",
+          "react",
+          "react-icons"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "ExercisePage",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "fetchSessionData",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "startTimer",
+          "params": [],
+          "return_type": "",
+          "complexity": "Medium",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "pauseTimer",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "resetTimer",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handlePoseSelect",
+          "params": [
+            "pose"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleDurationChange",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleSetsChange",
+          "params": [
+            "e"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleImageError",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "retryWebcam",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\components\\homepage.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5895, Requested 757. Please try again in 6.52s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 3,
+        "language": "javascript",
+        "lines_of_code": 116,
+        "dependencies": [
+          "firebase",
+          "framer-motion",
+          "@",
+          "react-simple-typewriter",
+          "next",
+          "react"
+        ],
+        "is_backend": true
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Homepage",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleScroll",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleConsultationClick",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\components\\navbar.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5890, Requested 659. Please try again in 5.49s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 2,
+        "language": "javascript",
+        "lines_of_code": 209,
+        "dependencies": [
+          "gsap",
+          "firebase",
+          "lucide-react",
+          "next",
+          "react"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "Navbar",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        },
+        {
+          "name": "handleLogout",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\components\\ui\\input.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5884, Requested 538. Please try again in 4.219999999s. Need more tokens? Upgrade to Dev Tier today at https:",
+      "file_analysis": {
+        "purpose": "UI Components",
+        "api_count": 0,
+        "function_count": 1,
+        "language": "javascript",
+        "lines_of_code": 47,
+        "dependencies": [
+          "@",
+          "react",
+          "motion"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "handleMouseMove",
+          "params": [],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    },
+    "src\\lib\\utils.js": {
+      "comprehensive_documentation": "API Error 429: {\"error\":{\"message\":\"Rate limit reached for model `llama-3.1-8b-instant` in organization `org_01jhhs77ptezwtgjjgjdjmbjg6` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5879, Requested 504. Please try again in 3.83s. Need more tokens? Upgrade to Dev Tier today at https://conso",
+      "file_analysis": {
+        "purpose": "Utilities",
+        "api_count": 0,
+        "function_count": 1,
+        "language": "javascript",
+        "lines_of_code": 5,
+        "dependencies": [
+          "clsx",
+          "tailwind-merge"
+        ],
+        "is_backend": false
+      },
+      "apis": [],
+      "functions": [
+        {
+          "name": "cn",
+          "params": [
+            "...inputs"
+          ],
+          "return_type": "",
+          "complexity": "Low",
+          "docstring": "",
+          "is_api_handler": false
+        }
+      ]
+    }
+  },
+  "all_files": [
+    {
+      "file_path": "ambulance.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "lines_of_code": 167,
+      "function_count": 4,
+      "is_backend": true,
+      "dependencies": [
+        "requests",
+        "CORS",
+        "flask",
+        "logging",
+        "load_dotenv",
+        "AetherCare",
+        "flask_cors",
+        "dotenv",
+        "Flask"
+      ]
+    },
+    {
+      "file_path": "chatbot.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "lines_of_code": 224,
+      "function_count": 4,
+      "is_backend": true,
+      "dependencies": [
+        "CORS",
+        "flask",
+        "Groq",
+        "load_model",
+        "load_dotenv",
+        "Assistant",
+        "PubmedTools",
+        "img_to_array",
+        "phi",
+        "flask_cors",
+        "numpy",
+        "dotenv",
+        "PIL",
+        "tensorflow",
+        "Image",
+        "Flask"
+      ]
+    },
+    {
+      "file_path": "document.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "lines_of_code": 243,
+      "function_count": 8,
+      "is_backend": true,
+      "dependencies": [
+        "PDF",
+        "tempfile",
+        "pdfplumber",
+        "PIL",
+        "documents",
+        "Flask",
+        "flask",
+        "logging",
+        "flask_cors",
+        "DOCX",
+        "List",
+        "spacy",
+        "crewai",
+        "Agent",
+        "load_dotenv",
+        "pytesseract",
+        "docx",
+        "typing",
+        "rule",
+        "Image",
+        "CORS",
+        "TXT",
+        "medical",
+        "document",
+        "dotenv",
+        "image"
+      ]
+    },
+    {
+      "file_path": "eslint.config.mjs",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "lines_of_code": 10,
+      "function_count": 0,
+      "is_backend": false,
+      "dependencies": [
+        "@eslint",
+        "url",
+        "path"
+      ]
+    },
+    {
+      "file_path": "location.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "lines_of_code": 273,
+      "function_count": 9,
+      "is_backend": true,
+      "dependencies": [
+        "requests",
+        "CORS",
+        "math",
+        "flask",
+        "load_dotenv",
+        "flask_cors",
+        "dotenv",
+        "Flask",
+        "user"
+      ]
+    },
+    {
+      "file_path": "next.config.mjs",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "lines_of_code": 3,
+      "function_count": 0,
+      "is_backend": false,
+      "dependencies": []
+    },
+    {
+      "file_path": "postcss.config.mjs",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "lines_of_code": 4,
+      "function_count": 0,
+      "is_backend": false,
+      "dependencies": []
+    },
+    {
+      "file_path": "server.js",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "lines_of_code": 92,
+      "function_count": 0,
+      "is_backend": true,
+      "dependencies": []
+    },
+    {
+      "file_path": "yoga.py",
+      "language": "python",
+      "file_purpose": "API Implementation",
+      "lines_of_code": 286,
+      "function_count": 8,
+      "is_backend": true,
+      "dependencies": [
+        "CORS",
+        "math",
+        "flask",
+        "defaultdict",
+        "mediapipe",
+        "collections",
+        "webcam",
+        "flask_cors",
+        "numpy",
+        "socket",
+        "cv2",
+        "Flask"
+      ]
+    },
+    {
+      "file_path": "pages\\api\\send-email.js",
+      "language": "javascript",
+      "file_purpose": "API Routes and Controllers",
+      "lines_of_code": 39,
+      "function_count": 0,
+      "is_backend": true,
+      "dependencies": [
+        "nodemailer"
+      ]
+    },
+    {
+      "file_path": "src\\app\\firebase-config.js",
+      "language": "javascript",
+      "file_purpose": "Configuration",
+      "lines_of_code": 17,
+      "function_count": 0,
+      "is_backend": true,
+      "dependencies": [
+        "firebase"
+      ]
+    },
+    {
+      "file_path": "src\\app\\layout.js",
+      "language": "javascript",
+      "file_purpose": "General Purpose",
+      "lines_of_code": 30,
+      "function_count": 1,
+      "is_backend": false,
+      "dependencies": [
+        "next"
+      ]
+    },
+    {
+      "file_path": "src\\app\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 14,
+      "function_count": 1,
+      "is_backend": false,
+      "dependencies": [
+        "@",
+        "next"
+      ]
+    },
+    {
+      "file_path": "src\\app\\about\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 202,
+      "function_count": 2,
+      "is_backend": true,
+      "dependencies": [
+        "framer-motion",
+        "@",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\ambulance\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 298,
+      "function_count": 4,
+      "is_backend": false,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "@",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\appointment\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 666,
+      "function_count": 5,
+      "is_backend": true,
+      "dependencies": [
+        "@",
+        "next",
+        "react",
+        "firebase"
+      ]
+    },
+    {
+      "file_path": "src\\app\\contact\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 401,
+      "function_count": 4,
+      "is_backend": false,
+      "dependencies": [
+        "gsap",
+        "@",
+        "emailjs-com",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\diagnosis\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 615,
+      "function_count": 12,
+      "is_backend": true,
+      "dependencies": [
+        "react-textarea-autosize",
+        "jspdf",
+        "firebase",
+        "framer-motion",
+        "@",
+        "remark-gfm",
+        "axios",
+        "react-markdown",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\doctor_profile\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 327,
+      "function_count": 2,
+      "is_backend": false,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "firebase",
+        "@",
+        "uuid",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\location_docs\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 574,
+      "function_count": 6,
+      "is_backend": false,
+      "dependencies": [
+        "@",
+        "gsap",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\login\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 565,
+      "function_count": 5,
+      "is_backend": true,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "firebase",
+        "crypto-js",
+        "@",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\profile\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 305,
+      "function_count": 3,
+      "is_backend": true,
+      "dependencies": [
+        "gsap",
+        "react-icons",
+        "firebase",
+        "@",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 53,
+      "function_count": 2,
+      "is_backend": true,
+      "dependencies": [
+        "next",
+        "react",
+        "uuid"
+      ]
+    },
+    {
+      "file_path": "src\\app\\room\\[roomId]\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 491,
+      "function_count": 10,
+      "is_backend": true,
+      "dependencies": [
+        "socket.io-client",
+        "react-icons",
+        "@",
+        "peerjs",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\app\\yoga\\page.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 432,
+      "function_count": 10,
+      "is_backend": false,
+      "dependencies": [
+        "@",
+        "next",
+        "react",
+        "react-icons"
+      ]
+    },
+    {
+      "file_path": "src\\components\\homepage.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 116,
+      "function_count": 3,
+      "is_backend": true,
+      "dependencies": [
+        "firebase",
+        "framer-motion",
+        "@",
+        "react-simple-typewriter",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\components\\navbar.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 209,
+      "function_count": 2,
+      "is_backend": false,
+      "dependencies": [
+        "gsap",
+        "firebase",
+        "lucide-react",
+        "next",
+        "react"
+      ]
+    },
+    {
+      "file_path": "src\\components\\ui\\input.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 47,
+      "function_count": 1,
+      "is_backend": false,
+      "dependencies": [
+        "@",
+        "react",
+        "motion"
+      ]
+    },
+    {
+      "file_path": "src\\components\\ui\\label.js",
+      "language": "javascript",
+      "file_purpose": "UI Components",
+      "lines_of_code": 16,
+      "function_count": 0,
+      "is_backend": false,
+      "dependencies": [
+        "@",
+        "react",
+        "@radix-ui"
+      ]
+    },
+    {
+      "file_path": "src\\lib\\utils.js",
+      "language": "javascript",
+      "file_purpose": "Utilities",
+      "lines_of_code": 5,
+      "function_count": 1,
+      "is_backend": false,
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ]
+    }
+  ]
+}

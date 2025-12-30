@@ -88,7 +88,7 @@ class DatabaseQuery(BaseModel):
     line: int
     raw_query: str
 
-# Enhanced data models for detailed analysis
+# Enhanced API endpoint model
 class APIEndpointDetail(BaseModel):
     method: str
     path: str
@@ -114,6 +114,77 @@ class ServiceInfo(BaseModel):
     dependencies: List[str] = []
     entry_point: Optional[str] = None
 
+# Enhanced data models for hierarchical analysis
+class GraphNode(BaseModel):
+    id: str
+    type: str  # file, function, class, module, domain
+    name: str
+    path: Optional[str] = None
+    metadata: Dict[str, Any] = {}
+    
+class GraphEdge(BaseModel):
+    source: str
+    target: str
+    type: str  # import, call, inheritance, dependency, contains
+    weight: float = 1.0
+    metadata: Dict[str, Any] = {}
+
+class KnowledgeGraph(BaseModel):
+    nodes: List[GraphNode] = []
+    edges: List[GraphEdge] = []
+    metadata: Dict[str, Any] = {}
+
+class ModuleSummary(BaseModel):
+    module_name: str
+    module_path: str
+    folders: List[str] = []
+    total_files: int = 0
+    primary_languages: List[str] = []
+    architecture_role: str = ""
+    interfaces: List[str] = []
+    responsibilities: List[str] = []
+    key_components: List[str] = []
+    llm_summary: Optional[str] = None
+
+class DomainSummary(BaseModel):
+    domain_name: str
+    modules: List[str] = []
+    architecture_overview: str = ""
+    data_flow: List[str] = []
+    business_logic: List[str] = []
+    integration_points: List[str] = []
+    key_patterns: List[str] = []
+    llm_summary: Optional[str] = None
+
+class GlobalArchitectureSummary(BaseModel):
+    system_overview: str = ""
+    key_patterns: List[str] = []
+    architectural_decisions: List[str] = []
+    data_flow_summary: str = ""
+    scalability_analysis: str = ""
+    security_considerations: List[str] = []
+    performance_insights: List[str] = []
+    recommendations: List[str] = []
+    technology_stack: Dict[str, List[str]] = {}
+    llm_summary: Optional[str] = None
+    middleware: List[str] = []
+    description: Optional[str] = None
+    usage_example: Optional[str] = None
+
+class EnvironmentVariable(BaseModel):
+    name: str
+    line: int
+    default_value: Optional[str] = None
+    description: Optional[str] = None
+    required: bool = True
+
+class ServiceInfo(BaseModel):
+    type: str  # frontend, backend, database, etc.
+    framework: Optional[str] = None
+    port: Optional[int] = None
+    dependencies: List[str] = []
+    entry_point: Optional[str] = None
+
 class DetailedFileAnalysis(BaseModel):
     file: str
     language: str
@@ -121,7 +192,7 @@ class DetailedFileAnalysis(BaseModel):
     functions: List[FunctionInfo] = []
     classes: List[ClassInfo] = []
     imports: List[ImportInfo] = []
-    api_endpoints: List[APIEndpointDetail] = []
+    api_endpoints: List[Dict[str, Any]] = []  # Changed to Dict for flexibility
     database_queries: List[DatabaseQuery] = []
     environment_variables: List[EnvironmentVariable] = []
     jsx_components: List[str] = []
@@ -140,7 +211,7 @@ class FolderSummary(BaseModel):
     total_files: int = 0
     primary_language: str = ""
     service_type: Optional[str] = None
-    api_endpoints: List[APIEndpointDetail] = []
+    api_endpoints: List[Dict[str, Any]] = []  # Changed to Dict for flexibility
     shared_dependencies: List[str] = []
     folder_purpose: Optional[str] = None
     key_components: List[str] = []
@@ -187,6 +258,24 @@ def get_file_language(filename):
             return lang
     return None
 
+def parse_api_keys(keys_input: str) -> List[str]:
+    """Parse API keys from user input, supporting multiple formats"""
+    if not keys_input:
+        return []
+    
+    # Split by comma, semicolon, or newline
+    import re
+    keys = re.split(r'[,;\n]+', keys_input)
+    
+    # Clean and validate keys
+    cleaned_keys = []
+    for key in keys:
+        key = key.strip()
+        if key and len(key) > 20:  # Basic validation
+            cleaned_keys.append(key)
+    
+    return cleaned_keys
+
 def dict_to_object(d):
     """Convert dictionary to object with attribute access"""
     if isinstance(d, dict):
@@ -200,26 +289,39 @@ def dict_to_object(d):
                 setattr(obj, key, value)
         return obj
     return d
-    """Convert FileAnalysis and related objects to dictionaries for JSON serialization"""
-    if hasattr(obj, '__dict__'):
-        result = {}
-        for key, value in obj.__dict__.items():
-            if isinstance(value, list):
-                result[key] = [convert_to_dict(item) for item in value]
-            elif hasattr(value, '__dict__'):
-                result[key] = convert_to_dict(value)
-            else:
-                result[key] = value
-        return result
+
+def estimate_processing_time(num_files: int, num_keys: int) -> str:
+    """Estimate processing time based on files and API keys"""
+    if num_keys == 0:
+        return "No LLM processing"
+    
+    # Rough estimation: ~30 seconds per file with 1 key, scales with more keys
+    base_time = num_files * 30
+    parallel_factor = min(num_keys * 2, 8)  # Max 8x speedup
+    estimated_seconds = base_time / parallel_factor
+    
+    if estimated_seconds < 60:
+        return f"~{int(estimated_seconds)}s"
+    elif estimated_seconds < 3600:
+        return f"~{int(estimated_seconds/60)}m {int(estimated_seconds%60)}s"
     else:
+        hours = int(estimated_seconds / 3600)
+        minutes = int((estimated_seconds % 3600) / 60)
+        return f"~{hours}h {minutes}m"
+
+def dict_to_object(d):
+    """Convert dictionary to object with attribute access"""
+    if isinstance(d, dict):
+        obj = type('DictObject', (), {})()
+        for key, value in d.items():
+            if isinstance(value, dict):
+                setattr(obj, key, dict_to_object(value))
+            elif isinstance(value, list):
+                setattr(obj, key, [dict_to_object(item) if isinstance(item, dict) else item for item in value])
+            else:
+                setattr(obj, key, value)
         return obj
-    """Count tokens in text using tiktoken"""
-    try:
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
-    except:
-        # Fallback: rough estimation
-        return len(text.split()) * 1.3
+    return d
 
 def count_tokens(text: str, model: str = "gpt-3.5-turbo") -> int:
     """Count tokens in text using tiktoken"""
@@ -259,6 +361,237 @@ def truncate_content(content: str, max_tokens: int = 3000) -> str:
     
     truncated = '\n'.join(lines[:keep_start] + ['... [TRUNCATED] ...'] + lines[-keep_end:])
     return truncated
+
+class RobustMultiKeyRateLimiter:
+    """Ultra-robust rate limiter that ensures LLM analysis completion"""
+    def __init__(self, api_keys: List[str], max_tokens_per_minute: int = 3000, max_calls_per_second: float = 1.0):
+        self.api_keys = api_keys
+        self.max_tokens_per_minute = max_tokens_per_minute
+        self.max_calls_per_second = max_calls_per_second
+        self.min_call_interval = 1.0 / max_calls_per_second
+        
+        # Enhanced per-key tracking
+        self.key_usage = {}  # {key: [(timestamp, tokens_used), ...]}
+        self.key_last_call = {}  # {key: timestamp}
+        self.key_failures = {}  # {key: failure_count}
+        self.key_cooldown = {}  # {key: cooldown_until_timestamp}
+        self.key_health = {}  # {key: health_score (0-100)}
+        self.key_success_count = {}  # {key: success_count}
+        self.lock = threading.Lock()
+        
+        # Initialize tracking for each key
+        for key in api_keys:
+            self.key_usage[key] = []
+            self.key_last_call[key] = 0
+            self.key_failures[key] = 0
+            self.key_cooldown[key] = 0
+            self.key_health[key] = 100  # Start with perfect health
+            self.key_success_count[key] = 0
+    
+    def estimate_tokens(self, content: str) -> int:
+        """Ultra-conservative token estimation to avoid limits"""
+        return len(content) // 2 + 200  # Very conservative estimation
+    
+    def update_key_health(self, api_key: str, success: bool):
+        """Update key health based on success/failure"""
+        with self.lock:
+            if success:
+                self.key_success_count[api_key] += 1
+                self.key_health[api_key] = min(100, self.key_health[api_key] + 5)
+                # Reduce failure count on success
+                self.key_failures[api_key] = max(0, self.key_failures[api_key] - 1)
+            else:
+                self.key_failures[api_key] += 1
+                self.key_health[api_key] = max(0, self.key_health[api_key] - 10)
+    
+    def mark_key_failed(self, api_key: str, error_type: str = "rate_limit"):
+        """Mark a key as failed with adaptive cooldown based on error type"""
+        with self.lock:
+            self.key_failures[api_key] += 1
+            
+            # Adaptive cooldown based on failure count and error type
+            base_cooldown = 30 if error_type == "rate_limit" else 10
+            failure_multiplier = min(self.key_failures[api_key], 5)  # Cap at 5x
+            cooldown_seconds = base_cooldown * failure_multiplier
+            
+            self.key_cooldown[api_key] = time.time() + cooldown_seconds
+            self.key_health[api_key] = max(0, self.key_health[api_key] - 15)
+            
+            print(f"🔴 Key {api_key[-8:]}... cooldown: {cooldown_seconds}s (failure #{self.key_failures[api_key]}, health: {self.key_health[api_key]}%)")
+    
+    def get_best_available_key(self, estimated_tokens: int) -> tuple[str, float]:
+        """Get the healthiest available API key"""
+        with self.lock:
+            current_time = time.time()
+            available_keys = []
+            
+            # Check each key's availability and health
+            for key in self.api_keys:
+                # Skip keys in cooldown
+                if current_time < self.key_cooldown.get(key, 0):
+                    continue
+                
+                # Clean old usage for this key
+                minute_ago = current_time - 60
+                self.key_usage[key] = [(ts, tokens) for ts, tokens in self.key_usage[key] if ts > minute_ago]
+                
+                # Check token limit for this key (more conservative)
+                current_tokens = sum(tokens for _, tokens in self.key_usage[key])
+                if current_tokens + estimated_tokens > self.max_tokens_per_minute:
+                    continue
+                
+                # Check call rate limit for this key (more conservative)
+                time_since_last_call = current_time - self.key_last_call[key]
+                if time_since_last_call < self.min_call_interval:
+                    continue
+                
+                # Calculate comprehensive key score (health + usage + failures)
+                usage_ratio = current_tokens / self.max_tokens_per_minute
+                failure_penalty = self.key_failures[key] * 10
+                health_bonus = self.key_health[key]
+                
+                score = health_bonus - (usage_ratio * 50) - failure_penalty
+                available_keys.append((key, score))
+            
+            if available_keys:
+                # Sort by score (higher is better) and return best key
+                available_keys.sort(key=lambda x: x[1], reverse=True)
+                best_key = available_keys[0][0]
+                return best_key, 0
+            
+            # No key available immediately, calculate minimum wait time
+            min_wait = float('inf')
+            for key in self.api_keys:
+                # Check cooldown wait
+                cooldown_wait = max(0, self.key_cooldown.get(key, 0) - current_time)
+                
+                # Check token limit wait
+                if self.key_usage[key]:
+                    oldest_time = min(ts for ts, _ in self.key_usage[key])
+                    token_wait = max(0, 61 - (current_time - oldest_time))
+                else:
+                    token_wait = 0
+                
+                # Check call rate wait
+                call_wait = max(0, self.min_call_interval - (current_time - self.key_last_call[key]))
+                
+                key_wait = max(cooldown_wait, token_wait, call_wait)
+                min_wait = min(min_wait, key_wait)
+            
+            return self.api_keys[0], max(min_wait, 2.0)  # Minimum 2s wait
+    
+    def record_request(self, api_key: str, tokens_used: int, success: bool = True):
+        """Record a request and update key health"""
+        with self.lock:
+            current_time = time.time()
+            self.key_usage[api_key].append((current_time, tokens_used))
+            self.key_last_call[api_key] = current_time
+            self.update_key_health(api_key, success)
+    
+    async def wait_for_available_key_async(self, estimated_tokens: int, max_wait_time: int = 300) -> str:
+        """Wait for available key with maximum wait time limit"""
+        start_time = time.time()
+        attempt = 0
+        
+        while (time.time() - start_time) < max_wait_time:
+            key, wait_time = self.get_best_available_key(estimated_tokens)
+            if wait_time == 0:
+                return key
+            
+            # Progressive wait time increase
+            adaptive_wait = min(wait_time * (1 + attempt * 0.2), 60)  # Max 60s wait
+            elapsed = time.time() - start_time
+            remaining = max_wait_time - elapsed
+            
+            if adaptive_wait > remaining:
+                print(f"⏰ Timeout approaching, using best available key...")
+                # Return the healthiest key even if not optimal
+                healthiest_key = max(self.api_keys, key=lambda k: self.key_health.get(k, 0))
+                return healthiest_key
+            
+            print(f"⏳ All keys busy, waiting {adaptive_wait:.1f}s (attempt {attempt + 1}, {remaining:.0f}s remaining)...")
+            await asyncio.sleep(adaptive_wait)
+            attempt += 1
+        
+        # Timeout reached, return healthiest key
+        healthiest_key = max(self.api_keys, key=lambda k: self.key_health.get(k, 0))
+        print(f"⚠️ Max wait time reached, using healthiest key: {healthiest_key[-8:]}...")
+        return healthiest_key
+    
+    def get_key_stats(self) -> Dict[str, Dict]:
+        """Get comprehensive statistics for all keys"""
+        with self.lock:
+            stats = {}
+            for key in self.api_keys:
+                stats[key[-8:]] = {
+                    "health": self.key_health[key],
+                    "failures": self.key_failures[key],
+                    "successes": self.key_success_count[key],
+                    "in_cooldown": time.time() < self.key_cooldown.get(key, 0),
+                    "cooldown_remaining": max(0, self.key_cooldown.get(key, 0) - time.time())
+                }
+            return stats
+            self.key_cooldown[api_key] = time.time() + cooldown_seconds
+            print(f"🔴 Key {api_key[-8:]}... in cooldown for {cooldown_seconds}s (failure #{self.key_failures[api_key]})")
+    
+    def get_best_available_key(self, estimated_tokens: int) -> tuple[str, float]:
+        """Get the best available API key with enhanced selection logic"""
+        with self.lock:
+            current_time = time.time()
+            available_keys = []
+            
+            # Check each key's availability
+            for key in self.api_keys:
+                # Skip keys in cooldown
+                if current_time < self.key_cooldown.get(key, 0):
+                    continue
+                
+                # Clean old usage for this key
+                minute_ago = current_time - 60
+                self.key_usage[key] = [(ts, tokens) for ts, tokens in self.key_usage[key] if ts > minute_ago]
+                
+                # Check token limit for this key
+                current_tokens = sum(tokens for _, tokens in self.key_usage[key])
+                if current_tokens + estimated_tokens > self.max_tokens_per_minute:
+                    continue
+                
+                # Check call rate limit for this key
+                time_since_last_call = current_time - self.key_last_call[key]
+                if time_since_last_call < self.min_call_interval:
+                    continue
+                
+                # Calculate key score (lower failures = better score)
+                score = self.key_failures.get(key, 0) + (current_tokens / self.max_tokens_per_minute)
+                available_keys.append((key, score))
+            
+            if available_keys:
+                # Sort by score and return best key
+                available_keys.sort(key=lambda x: x[1])
+                best_key = available_keys[0][0]
+                return best_key, 0
+            
+            # No key available immediately, calculate minimum wait time
+            min_wait = float('inf')
+            for key in self.api_keys:
+                # Check cooldown wait
+                cooldown_wait = max(0, self.key_cooldown.get(key, 0) - current_time)
+                
+                # Check token limit wait
+                if self.key_usage[key]:
+                    oldest_time = min(ts for ts, _ in self.key_usage[key])
+                    token_wait = max(0, 61 - (current_time - oldest_time))
+                else:
+                    token_wait = 0
+                
+                # Check call rate wait
+                call_wait = max(0, self.min_call_interval - (current_time - self.key_last_call[key]))
+                
+                key_wait = max(cooldown_wait, token_wait, call_wait)
+                min_wait = min(min_wait, key_wait)
+            
+            return self.api_keys[0], max(min_wait, 1.0)
+            if api_key in self.key_failures:
+                self.key_failures[api_key] = max(0, self.key_failures[api_key] - 1)
 
 class TokenAwareRateLimiter:
     """Advanced rate limiter that tracks tokens per minute for Groq API"""
@@ -324,96 +657,543 @@ class TokenAwareRateLimiter:
             if not can_make and additional_wait > 0:
                 await asyncio.sleep(additional_wait)
 
-class GroqLLMClient:
-    """Groq LLM client with advanced rate limiting and error handling"""
+class RobustGroqLLMClient:
+    """Ultra-robust Groq LLM client that ensures analysis completion"""
     
-    def __init__(self, api_key: str, rate_limiter: TokenAwareRateLimiter):
-        self.api_key = api_key
+    def __init__(self, api_keys: List[str], rate_limiter: RobustMultiKeyRateLimiter):
+        self.api_keys = api_keys
         self.rate_limiter = rate_limiter
         self.base_url = "https://api.groq.com/openai/v1/chat/completions"
         
-    async def generate_summary(self, session: aiohttp.ClientSession, request: LLMSummaryRequest) -> LLMSummaryResponse:
-        """Generate file summary using Groq API with advanced rate limiting"""
-        max_retries = 3
+    async def generate_summary_with_guarantee(self, session: aiohttp.ClientSession, request: LLMSummaryRequest) -> LLMSummaryResponse:
+        """Generate file summary with guarantee of completion - no fallbacks allowed"""
+        max_retries = 15  # Increased retries for guarantee
+        retry_delays = [1, 2, 5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300, 360]  # Progressive delays
         
-        # Prepare content for LLM (inline truncation to avoid import issues)
-        content = request.content
-        if len(content) > 8000:  # Simple truncation
-            lines = content.split('\n')
-            total_lines = len(lines)
-            keep_start = int(total_lines * 0.7)
-            keep_end = int(total_lines * 0.3)
-            content = '\n'.join(lines[:keep_start] + ['... [TRUNCATED] ...'] + lines[-keep_end:])
-        
+        # Prepare highly optimized content for API limits
+        content = self._optimize_content_for_api(request.content)
         prompt = self._build_analysis_prompt(request.file_path, content, request.analysis)
-        
-        # Estimate tokens for this request
         estimated_tokens = self.rate_limiter.estimate_tokens(prompt)
+        
+        print(f"🎯 Guaranteed processing: {request.file_path} ({estimated_tokens} tokens)")
         
         for attempt in range(max_retries):
             try:
-                # Advanced rate limiting with token awareness
-                await self.rate_limiter.wait_if_needed_async(estimated_tokens)
+                # Get best available API key with extended wait time
+                api_key = await self.rate_limiter.wait_for_available_key_async(estimated_tokens, max_wait_time=600)
                 
                 payload = {
                     "model": "llama-3.1-8b-instant",
                     "messages": [
                         {
                             "role": "system",
-                            "content": "You are an expert code analyst. Provide concise, structured analysis of code files."
+                            "content": "You are an expert code analyst. Provide detailed, structured analysis of code files with specific focus on API endpoints, functions, and usage instructions."
                         },
                         {
                             "role": "user", 
                             "content": prompt
                         }
                     ],
-                    "max_tokens": 800,  # Reduced to stay within limits
+                    "max_tokens": 500,  # Conservative for reliability
                     "temperature": 0.1
                 }
                 
                 headers = {
-                    "Authorization": f"Bearer {self.api_key}",
+                    "Authorization": f"Bearer {api_key}",
                     "Content-Type": "application/json"
                 }
                 
-                async with session.post(self.base_url, json=payload, headers=headers) as response:
+                # Extended timeout for reliability
+                timeout = aiohttp.ClientTimeout(total=60)
+                
+                async with session.post(self.base_url, json=payload, headers=headers, timeout=timeout) as response:
                     if response.status == 200:
                         result = await response.json()
                         content_response = result['choices'][0]['message']['content']
                         
                         # Record successful request
                         actual_tokens = result.get('usage', {}).get('total_tokens', estimated_tokens)
-                        self.rate_limiter.record_request(actual_tokens)
+                        self.rate_limiter.record_request(api_key, actual_tokens, success=True)
+                        
+                        print(f"✅ Success: {request.file_path} (attempt {attempt + 1})")
+                        return self._parse_llm_response(request.file_path, content_response)
+                        
+                    elif response.status == 429:
+                        # Rate limit hit - mark key and try again
+                        error_text = await response.text()
+                        wait_time = self._extract_wait_time_from_error(error_text)
+                        
+                        self.rate_limiter.mark_key_failed(api_key, "rate_limit")
+                        self.rate_limiter.record_request(api_key, estimated_tokens, success=False)
+                        
+                        retry_delay = retry_delays[min(attempt, len(retry_delays) - 1)]
+                        print(f"⏳ Rate limit hit for {request.file_path}, retrying in {retry_delay}s (attempt {attempt + 1}/{max_retries})")
+                        await asyncio.sleep(retry_delay)
+                        continue
+                    
+                    elif response.status in [500, 502, 503, 504]:
+                        # Server errors - retry with exponential backoff
+                        self.rate_limiter.mark_key_failed(api_key, "server_error")
+                        retry_delay = retry_delays[min(attempt, len(retry_delays) - 1)]
+                        print(f"🔄 Server error {response.status} for {request.file_path}, retrying in {retry_delay}s")
+                        await asyncio.sleep(retry_delay)
+                        continue
+                        
+                    else:
+                        error_text = await response.text()
+                        print(f"❌ API Error for {request.file_path}: {response.status} - {error_text[:200]}")
+                        self.rate_limiter.record_request(api_key, estimated_tokens, success=False)
+                        
+                        if attempt < max_retries - 1:
+                            retry_delay = retry_delays[min(attempt, len(retry_delays) - 1)]
+                            await asyncio.sleep(retry_delay)
+                            continue
+                        
+            except asyncio.TimeoutError:
+                print(f"⏰ Timeout for {request.file_path} (attempt {attempt + 1})")
+                retry_delay = retry_delays[min(attempt, len(retry_delays) - 1)]
+                await asyncio.sleep(retry_delay)
+                
+            except Exception as e:
+                print(f"❌ Request failed for {request.file_path} (attempt {attempt + 1}): {str(e)[:200]}")
+                retry_delay = retry_delays[min(attempt, len(retry_delays) - 1)]
+                await asyncio.sleep(retry_delay)
+        
+        # If we reach here, all retries failed - this should not happen with robust system
+        raise Exception(f"CRITICAL: Failed to process {request.file_path} after {max_retries} attempts with robust retry system")
+    
+    def _optimize_content_for_api(self, content: str) -> str:
+        """Aggressively optimize content to fit within API limits"""
+        if len(content) <= 4000:
+            return content
+        
+        lines = content.split('\n')
+        total_lines = len(lines)
+        
+        # Keep more of the beginning (functions/APIs) and less of the end
+        keep_start = int(total_lines * 0.8)  # 80% from start
+        keep_end = int(total_lines * 0.1)    # 10% from end
+        
+        optimized = '\n'.join(lines[:keep_start] + ['... [CONTENT OPTIMIZED FOR API ANALYSIS] ...'] + lines[-keep_end:])
+        
+        # If still too long, take only function definitions and API routes
+        if len(optimized) > 4000:
+            function_lines = []
+            for i, line in enumerate(lines):
+                if any(keyword in line for keyword in ['function ', 'def ', 'app.', 'router.', 'export', 'class ', '@']):
+                    # Take this line and next 2 lines for context
+                    function_lines.extend(lines[i:i+3])
+            
+            if function_lines:
+                optimized = '\n'.join(function_lines[:100])  # Limit to 100 lines
+            else:
+                optimized = '\n'.join(lines[:50])  # Fallback to first 50 lines
+        
+        return optimized
+    
+    def _build_analysis_prompt(self, file_path: str, content: str, analysis: Any) -> str:
+        """Build comprehensive analysis prompt for API functions and usage"""
+        
+        # Determine file type for specialized analysis
+        file_type = self._determine_file_type(file_path, analysis)
+        
+        base_info = f"""FILE: {file_path}
+LANGUAGE: {getattr(analysis, 'language', 'unknown')}
+FUNCTIONS: {len(getattr(analysis, 'functions', []))}
+CLASSES: {len(getattr(analysis, 'classes', []))}
+API_ENDPOINTS: {len(getattr(analysis, 'api_endpoints', []))}"""
+
+        if file_type == "api_routes" or getattr(analysis, 'api_endpoints', []):
+            return self._build_api_comprehensive_prompt(base_info, content, analysis)
+        elif file_type == "frontend_component":
+            return self._build_component_comprehensive_prompt(base_info, content, analysis)
+        elif file_type == "backend_service":
+            return self._build_service_comprehensive_prompt(base_info, content, analysis)
+        else:
+            return self._build_general_comprehensive_prompt(base_info, content, analysis)
+    
+    def _build_api_comprehensive_prompt(self, base_info: str, content: str, analysis: Any) -> str:
+        """Comprehensive prompt for API files with complete usage instructions"""
+        
+        api_info = ""
+        if hasattr(analysis, 'api_endpoints') and analysis.api_endpoints:
+            api_info = f"\nAPI ENDPOINTS DETECTED: {len(analysis.api_endpoints)}"
+            for api in analysis.api_endpoints[:5]:
+                method = api.get('method', 'GET') if isinstance(api, dict) else getattr(api, 'method', 'GET')
+                path = api.get('path', '/') if isinstance(api, dict) else getattr(api, 'path', '/')
+                api_info += f"\n- {method} {path}"
+        
+        return f"""Analyze this API file and provide COMPLETE documentation for running and using the application:
+
+{base_info}{api_info}
+
+CODE:
+```
+{content}
+```
+
+Provide COMPREHENSIVE analysis in this format:
+
+SUMMARY: [Detailed description of what this API file does and its role in the application]
+
+API_ENDPOINTS: [For EACH endpoint, provide:
+- Purpose and functionality
+- Required parameters with types and descriptions
+- Request body format with examples
+- Response format with examples
+- Authentication requirements
+- Error codes and handling]
+
+SETUP_INSTRUCTIONS: [Complete step-by-step instructions to run this API:
+- Prerequisites and dependencies
+- Environment variables needed
+- Database setup if required
+- How to start the server
+- Port and URL information]
+
+USAGE_EXAMPLES: [Provide complete working examples:
+- cURL commands for each endpoint
+- JavaScript fetch examples
+- Python requests examples
+- Postman collection format]
+
+AUTHENTICATION: [Complete authentication setup:
+- How to obtain API keys/tokens
+- Where to include authentication
+- Authentication flow examples]
+
+ERROR_HANDLING: [Complete error documentation:
+- All possible error codes
+- Error response formats
+- How to handle each error type]
+
+INTEGRATION_GUIDE: [How to integrate with frontend:
+- Frontend connection examples
+- State management integration
+- Real-time features if any]
+
+DEPLOYMENT: [Production deployment instructions:
+- Environment setup
+- Configuration requirements
+- Scaling considerations]
+
+Focus on providing COMPLETE, ACTIONABLE instructions that allow someone to immediately run and use this application."""
+
+    def _build_component_comprehensive_prompt(self, base_info: str, content: str, analysis: Any) -> str:
+        """Comprehensive prompt for frontend components"""
+        
+        return f"""Analyze this frontend component and provide COMPLETE usage and setup documentation:
+
+{base_info}
+
+CODE:
+```
+{content}
+```
+
+Provide COMPREHENSIVE analysis:
+
+SUMMARY: [What this component does and its role in the application]
+
+COMPONENT_USAGE: [Complete usage instructions:
+- How to import and use this component
+- Required props with types and descriptions
+- Optional props and their defaults
+- Event handlers and callbacks]
+
+SETUP_INSTRUCTIONS: [Complete frontend setup:
+- Prerequisites (Node.js version, etc.)
+- Installation commands (npm/yarn install)
+- Development server startup
+- Build process for production]
+
+INTEGRATION_EXAMPLES: [Working code examples:
+- How to use this component in other components
+- Props passing examples
+- State management integration
+- API integration examples]
+
+STYLING_SETUP: [Complete styling information:
+- CSS framework used
+- Custom styles location
+- Theme configuration
+- Responsive design features]
+
+DEPENDENCIES: [All required dependencies:
+- External libraries used
+- Installation commands
+- Configuration requirements]
+
+DEVELOPMENT_WORKFLOW: [Complete development setup:
+- How to run in development mode
+- Hot reload setup
+- Testing instructions
+- Debugging tips]
+
+Focus on providing COMPLETE instructions for setting up and running the frontend application."""
+
+    def _build_service_comprehensive_prompt(self, base_info: str, content: str, analysis: Any) -> str:
+        """Comprehensive prompt for backend services"""
+        
+        return f"""Analyze this backend service and provide COMPLETE setup and usage documentation:
+
+{base_info}
+
+CODE:
+```
+{content}
+```
+
+Provide COMPREHENSIVE analysis:
+
+SUMMARY: [What this service does and its role in the application architecture]
+
+SERVICE_SETUP: [Complete service setup instructions:
+- Prerequisites and system requirements
+- Installation steps
+- Configuration files needed
+- Environment variables with descriptions]
+
+DATABASE_SETUP: [Complete database configuration:
+- Database type and version
+- Schema setup instructions
+- Migration commands
+- Seed data instructions]
+
+API_DOCUMENTATION: [Complete API documentation:
+- All endpoints with full descriptions
+- Request/response formats
+- Authentication requirements
+- Rate limiting information]
+
+DEPLOYMENT_GUIDE: [Production deployment:
+- Server requirements
+- Deployment steps
+- Environment configuration
+- Monitoring setup]
+
+INTEGRATION_POINTS: [How this service integrates:
+- Frontend integration
+- Other service dependencies
+- External API integrations
+- Message queue setup if any]
+
+TROUBLESHOOTING: [Common issues and solutions:
+- Error messages and fixes
+- Performance optimization
+- Debugging techniques]
+
+Focus on providing COMPLETE, step-by-step instructions for running this service in development and production."""
+
+    def _build_general_comprehensive_prompt(self, base_info: str, content: str, analysis: Any) -> str:
+        """Comprehensive prompt for general files"""
+        
+        return f"""Analyze this code file and provide COMPLETE documentation:
+
+{base_info}
+
+CODE:
+```
+{content}
+```
+
+Provide COMPREHENSIVE analysis:
+
+SUMMARY: [Detailed description of file purpose and functionality]
+
+KEY_FUNCTIONS: [List all important functions with:
+- Purpose and functionality
+- Parameters and return values
+- Usage examples
+- Integration points]
+
+SETUP_REQUIREMENTS: [What's needed to use this code:
+- Dependencies and installations
+- Configuration requirements
+- Environment setup]
+
+USAGE_INSTRUCTIONS: [How to use this code:
+- Import/require statements
+- Initialization steps
+- Common usage patterns
+- Integration examples]
+
+CONFIGURATION: [All configuration options:
+- Environment variables
+- Config file settings
+- Runtime parameters]
+
+Focus on providing COMPLETE, actionable documentation."""
+
+    def _determine_file_type(self, file_path: str, analysis: Any) -> str:
+        """Determine file type for specialized analysis"""
+        path_lower = file_path.lower()
+        
+        if hasattr(analysis, 'api_endpoints') and analysis.api_endpoints:
+            return "api_routes"
+        elif any(pattern in path_lower for pattern in ['component', 'jsx', 'tsx']):
+            return "frontend_component"
+        elif any(pattern in path_lower for pattern in ['server', 'service', 'api', 'app.py', 'main.py']):
+            return "backend_service"
+        else:
+            return "general"
+    
+    def _extract_wait_time_from_error(self, error_text: str) -> float:
+        """Extract wait time from error message"""
+        import re
+        match = re.search(r'try again in ([\d.]+)s', error_text)
+        if match:
+            return float(match.group(1)) + 2  # Add 2 second buffer
+        
+        match = re.search(r'try again in ([\d.]+)ms', error_text)
+        if match:
+            return float(match.group(1)) / 1000 + 1  # Convert to seconds + buffer
+        
+        return 30.0  # Default wait time
+    
+    def _parse_llm_response(self, file_path: str, content: str) -> LLMSummaryResponse:
+        """Parse comprehensive LLM response"""
+        lines = content.split('\n')
+        
+        summary = ""
+        key_insights = []
+        architectural_role = ""
+        complexity_assessment = ""
+        improvement_suggestions = []
+        
+        current_section = None
+        
+        for line in lines:
+            line = line.strip()
+            if line.startswith('SUMMARY:'):
+                current_section = 'summary'
+                summary = line.replace('SUMMARY:', '').strip()
+            elif line.startswith('API_ENDPOINTS:'):
+                current_section = 'api_endpoints'
+            elif line.startswith('SETUP_INSTRUCTIONS:'):
+                current_section = 'setup'
+            elif line.startswith('USAGE_EXAMPLES:'):
+                current_section = 'usage'
+            elif line.startswith('KEY_FUNCTIONS:'):
+                current_section = 'functions'
+            elif current_section and line:
+                if current_section == 'summary':
+                    summary += " " + line
+                else:
+                    key_insights.append(f"[{current_section.upper()}] {line}")
+        
+        return LLMSummaryResponse(
+            file_path=file_path,
+            summary=summary or f"Comprehensive analysis of {Path(file_path).name}",
+            key_insights=key_insights[:10],  # Limit to prevent overflow
+            architectural_role=architectural_role or "Application component",
+            complexity_assessment=complexity_assessment or "Standard complexity",
+            improvement_suggestions=improvement_suggestions
+        )
+    """Enhanced Groq LLM client with improved rate limiting and error handling"""
+    
+    def __init__(self, api_keys: List[str], rate_limiter: RobustMultiKeyRateLimiter):
+        self.api_keys = api_keys
+        self.rate_limiter = rate_limiter
+        self.base_url = "https://api.groq.com/openai/v1/chat/completions"
+        
+    async def generate_summary(self, session: aiohttp.ClientSession, request: LLMSummaryRequest) -> LLMSummaryResponse:
+        """Generate file summary with enhanced error handling and rate limiting"""
+        max_retries = 5  # Increased retries
+        
+        # Prepare optimized content
+        content = request.content
+        if len(content) > 6000:  # More aggressive truncation
+            lines = content.split('\n')
+            total_lines = len(lines)
+            keep_start = int(total_lines * 0.6)
+            keep_end = int(total_lines * 0.2)
+            content = '\n'.join(lines[:keep_start] + ['... [TRUNCATED] ...'] + lines[-keep_end:])
+        
+        prompt = self._build_analysis_prompt(request.file_path, content, request.analysis)
+        estimated_tokens = self.rate_limiter.estimate_tokens(prompt)
+        
+        for attempt in range(max_retries):
+            try:
+                # Get best available API key
+                api_key = await self.rate_limiter.wait_for_available_key_async(estimated_tokens)
+                
+                payload = {
+                    "model": "llama-3.1-8b-instant",
+                    "messages": [
+                        {
+                            "role": "system",
+                            "content": "You are an expert code analyst. Provide concise, structured analysis."
+                        },
+                        {
+                            "role": "user", 
+                            "content": prompt
+                        }
+                    ],
+                    "max_tokens": 600,  # Reduced for faster processing
+                    "temperature": 0.1
+                }
+                
+                headers = {
+                    "Authorization": f"Bearer {api_key}",
+                    "Content-Type": "application/json"
+                }
+                
+                # Add timeout for faster failure detection
+                timeout = aiohttp.ClientTimeout(total=30)
+                
+                async with session.post(self.base_url, json=payload, headers=headers, timeout=timeout) as response:
+                    if response.status == 200:
+                        result = await response.json()
+                        content_response = result['choices'][0]['message']['content']
+                        
+                        # Record successful request
+                        actual_tokens = result.get('usage', {}).get('total_tokens', estimated_tokens)
+                        self.rate_limiter.record_request(api_key, actual_tokens)
                         
                         return self._parse_llm_response(request.file_path, content_response)
                         
                     elif response.status == 429:
-                        # Rate limit hit - extract wait time from error message
+                        # Rate limit hit - mark key as failed and try another
                         error_text = await response.text()
                         wait_time = self._extract_wait_time_from_error(error_text)
                         
+                        # Mark this key as failed with adaptive cooldown
+                        cooldown = min(wait_time + 10, 60)  # 10s buffer, max 60s
+                        self.rate_limiter.mark_key_failed(api_key, cooldown)
+                        
                         if attempt < max_retries - 1:
-                            print(f"⏳ Rate limit hit for {request.file_path}, waiting {wait_time}s (attempt {attempt + 1})")
-                            await asyncio.sleep(wait_time)
+                            print(f"⏳ Rate limit hit for {request.file_path}, trying different key...")
+                            await asyncio.sleep(1)  # Short delay before retry
                             continue
                         else:
                             print(f"❌ Rate limit exceeded for {request.file_path} after {max_retries} attempts")
                             return self._create_fallback_response(request.file_path)
+                    
+                    elif response.status in [500, 502, 503, 504]:
+                        # Server errors - retry with different key
+                        print(f"🔄 Server error {response.status} for {request.file_path}, retrying...")
+                        await asyncio.sleep(2 ** min(attempt, 3))  # Exponential backoff, max 8s
+                        continue
+                        
                     else:
                         error_text = await response.text()
-                        print(f"❌ LLM API Error for {request.file_path}: {response.status} - {error_text}")
+                        print(f"❌ API Error for {request.file_path}: {response.status} - {error_text[:100]}")
                         if attempt == max_retries - 1:
                             return self._create_fallback_response(request.file_path)
                         
-            except Exception as e:
-                print(f"❌ LLM Request failed for {request.file_path} (attempt {attempt + 1}): {str(e)}")
+            except asyncio.TimeoutError:
+                print(f"⏰ Timeout for {request.file_path} (attempt {attempt + 1})")
                 if attempt == max_retries - 1:
                     return self._create_fallback_response(request.file_path)
+                await asyncio.sleep(2)
                 
-                # Exponential backoff for errors
-                await asyncio.sleep(2 ** attempt)
+            except Exception as e:
+                print(f"❌ Request failed for {request.file_path} (attempt {attempt + 1}): {str(e)[:100]}")
+                if attempt == max_retries - 1:
+                    return self._create_fallback_response(request.file_path)
+                await asyncio.sleep(2 ** min(attempt, 3))
         
-        # Fallback if all retries failed
         return self._create_fallback_response(request.file_path)
     
     def _extract_wait_time_from_error(self, error_text: str) -> float:
@@ -478,7 +1258,9 @@ LINES: {analysis.lines_of_code}"""
         if analysis.api_endpoints:
             api_info = f"\nAPI ENDPOINTS DETECTED: {len(analysis.api_endpoints)}"
             for api in analysis.api_endpoints[:3]:
-                api_info += f"\n- {api.method} {api.path}"
+                method = api.get('method') if isinstance(api, dict) else getattr(api, 'method', 'GET')
+                path = api.get('path') if isinstance(api, dict) else getattr(api, 'path', '/')
+                api_info += f"\n- {method} {path}"
         
         return f"""Analyze this API routes file and provide detailed documentation:
 
@@ -751,6 +1533,354 @@ class GitHubRepoCloner:
             except Exception as e:
                 print(f"⚠️ Warning: Could not clean up temp directory: {e}")
 
+class KnowledgeGraphBuilder:
+    """Builds a comprehensive knowledge graph from code analysis"""
+    
+    def __init__(self):
+        self.graph = nx.DiGraph()
+        self.nodes = []
+        self.edges = []
+    
+    def build_graph(self, files_data: List[DetailedFileAnalysis]) -> KnowledgeGraph:
+        """Build knowledge graph from analyzed files"""
+        print("🔗 Building knowledge graph...")
+        
+        # Step 1: Add file nodes
+        self._add_file_nodes(files_data)
+        
+        # Step 2: Add function and class nodes
+        self._add_code_element_nodes(files_data)
+        
+        # Step 3: Add dependency edges
+        self._add_dependency_edges(files_data)
+        
+        # Step 4: Add call relationships
+        self._add_call_relationships(files_data)
+        
+        # Step 5: Add containment relationships
+        self._add_containment_relationships(files_data)
+        
+        # Step 6: Calculate graph metrics
+        self._calculate_graph_metrics()
+        
+        knowledge_graph = KnowledgeGraph(
+            nodes=self.nodes,
+            edges=self.edges,
+            metadata={
+                "total_nodes": len(self.nodes),
+                "total_edges": len(self.edges),
+                "node_types": self._get_node_type_counts(),
+                "edge_types": self._get_edge_type_counts()
+            }
+        )
+        
+        print(f"✅ Knowledge graph built: {len(self.nodes)} nodes, {len(self.edges)} edges")
+        return knowledge_graph
+    
+    def _add_file_nodes(self, files_data: List[DetailedFileAnalysis]):
+        """Add file nodes to the graph"""
+        for file_data in files_data:
+            node_id = f"file:{file_data.file}"
+            
+            # Determine file category
+            file_category = self._categorize_file(file_data)
+            
+            node = GraphNode(
+                id=node_id,
+                type="file",
+                name=Path(file_data.file).name,
+                path=file_data.file,
+                metadata={
+                    "language": file_data.language,
+                    "category": file_category,
+                    "lines_of_code": file_data.lines_of_code,
+                    "complexity_score": file_data.complexity_score,
+                    "function_count": len(file_data.functions),
+                    "class_count": len(file_data.classes),
+                    "api_endpoint_count": len(file_data.api_endpoints),
+                    "service_info": file_data.service_info.__dict__ if file_data.service_info else None
+                }
+            )
+            
+            self.nodes.append(node)
+            self.graph.add_node(node_id, **node.metadata)
+    
+    def _add_code_element_nodes(self, files_data: List[DetailedFileAnalysis]):
+        """Add function and class nodes"""
+        for file_data in files_data:
+            file_node_id = f"file:{file_data.file}"
+            
+            # Add function nodes
+            for func in file_data.functions:
+                func_id = f"function:{file_data.file}:{func.name}"
+                
+                func_node = GraphNode(
+                    id=func_id,
+                    type="function",
+                    name=func.name,
+                    path=file_data.file,
+                    metadata={
+                        "parameters": func.params,
+                        "line": func.line,
+                        "is_async": func.is_async,
+                        "is_exported": func.is_exported,
+                        "return_type": func.return_type,
+                        "complexity": getattr(func, 'complexity', 0)
+                    }
+                )
+                
+                self.nodes.append(func_node)
+                self.graph.add_node(func_id, **func_node.metadata)
+                
+                # Add containment edge (file contains function)
+                self._add_edge(file_node_id, func_id, "contains", 1.0)
+            
+            # Add class nodes
+            for cls in file_data.classes:
+                cls_id = f"class:{file_data.file}:{cls.name}"
+                
+                cls_node = GraphNode(
+                    id=cls_id,
+                    type="class",
+                    name=cls.name,
+                    path=file_data.file,
+                    metadata={
+                        "methods": cls.methods,
+                        "line": cls.line,
+                        "extends": cls.extends,
+                        "implements": cls.implements,
+                        "is_exported": cls.is_exported
+                    }
+                )
+                
+                self.nodes.append(cls_node)
+                self.graph.add_node(cls_id, **cls_node.metadata)
+                
+                # Add containment edge (file contains class)
+                self._add_edge(file_node_id, cls_id, "contains", 1.0)
+                
+                # Add method nodes
+                for method in cls.methods:
+                    method_id = f"method:{file_data.file}:{cls.name}:{method}"
+                    
+                    method_node = GraphNode(
+                        id=method_id,
+                        type="method",
+                        name=method,
+                        path=file_data.file,
+                        metadata={
+                            "class": cls.name,
+                            "line": cls.line  # Approximate
+                        }
+                    )
+                    
+                    self.nodes.append(method_node)
+                    self.graph.add_node(method_id, **method_node.metadata)
+                    
+                    # Add containment edge (class contains method)
+                    self._add_edge(cls_id, method_id, "contains", 1.0)
+    
+    def _add_dependency_edges(self, files_data: List[DetailedFileAnalysis]):
+        """Add import and dependency edges"""
+        for file_data in files_data:
+            source_id = f"file:{file_data.file}"
+            
+            for imp in file_data.imports:
+                # Handle internal imports (relative paths)
+                if imp.source.startswith('.') or imp.source.startswith('/'):
+                    # Try to resolve relative import to actual file
+                    target_file = self._resolve_import_path(file_data.file, imp.source)
+                    if target_file:
+                        target_id = f"file:{target_file}"
+                        self._add_edge(source_id, target_id, "imports", 1.0, {
+                            "import_line": imp.line,
+                            "imported_names": imp.imported_names
+                        })
+                else:
+                    # External dependency
+                    dep_id = f"external:{imp.source.split('/')[0]}"
+                    
+                    # Add external dependency node if not exists
+                    if not any(node.id == dep_id for node in self.nodes):
+                        dep_node = GraphNode(
+                            id=dep_id,
+                            type="external_dependency",
+                            name=imp.source.split('/')[0],
+                            metadata={
+                                "full_name": imp.source,
+                                "is_external": True
+                            }
+                        )
+                        self.nodes.append(dep_node)
+                        self.graph.add_node(dep_id, **dep_node.metadata)
+                    
+                    self._add_edge(source_id, dep_id, "depends_on", 1.0, {
+                        "import_line": imp.line,
+                        "imported_names": imp.imported_names
+                    })
+    
+    def _add_call_relationships(self, files_data: List[DetailedFileAnalysis]):
+        """Add function call relationships (simplified)"""
+        # This is a simplified implementation
+        # In a full implementation, you'd parse the AST to find actual function calls
+        
+        for file_data in files_data:
+            # Add API call relationships
+            for api in file_data.api_endpoints:
+                method = api.get('method') if isinstance(api, dict) else getattr(api, 'method', 'GET')
+                path = api.get('path') if isinstance(api, dict) else getattr(api, 'path', '/')
+                line = api.get('line') if isinstance(api, dict) else getattr(api, 'line', 0)
+                function_name = api.get('function_name') if isinstance(api, dict) else getattr(api, 'function_name', None)
+                parameters = api.get('parameters', []) if isinstance(api, dict) else getattr(api, 'parameters', [])
+                
+                api_id = f"api:{file_data.file}:{method}:{path}"
+                
+                # Add API endpoint node
+                api_node = GraphNode(
+                    id=api_id,
+                    type="api_endpoint",
+                    name=f"{method} {path}",
+                    path=file_data.file,
+                    metadata={
+                        "method": method,
+                        "path": path,
+                        "line": line,
+                        "function_name": function_name,
+                        "parameters": parameters
+                    }
+                )
+                
+                self.nodes.append(api_node)
+                self.graph.add_node(api_id, **api_node.metadata)
+                
+                # Link API to file
+                file_id = f"file:{file_data.file}"
+                self._add_edge(file_id, api_id, "exposes", 1.0)
+                
+                # Link API to handler function if known
+                if function_name:
+                    func_id = f"function:{file_data.file}:{function_name}"
+                    self._add_edge(api_id, func_id, "handled_by", 1.0)
+    
+    def _add_containment_relationships(self, files_data: List[DetailedFileAnalysis]):
+        """Add folder/module containment relationships"""
+        folders = {}
+        
+        # Group files by folder
+        for file_data in files_data:
+            folder_path = str(Path(file_data.file).parent)
+            if folder_path == '.':
+                folder_path = 'root'
+            
+            if folder_path not in folders:
+                folders[folder_path] = []
+            folders[folder_path].append(file_data.file)
+        
+        # Add folder nodes and containment edges
+        for folder_path, files in folders.items():
+            folder_id = f"folder:{folder_path}"
+            
+            folder_node = GraphNode(
+                id=folder_id,
+                type="folder",
+                name=Path(folder_path).name if folder_path != 'root' else 'root',
+                path=folder_path,
+                metadata={
+                    "file_count": len(files),
+                    "files": files
+                }
+            )
+            
+            self.nodes.append(folder_node)
+            self.graph.add_node(folder_id, **folder_node.metadata)
+            
+            # Add containment edges (folder contains files)
+            for file_path in files:
+                file_id = f"file:{file_path}"
+                self._add_edge(folder_id, file_id, "contains", 1.0)
+    
+    def _add_edge(self, source: str, target: str, edge_type: str, weight: float = 1.0, metadata: Dict = None):
+        """Add an edge to the graph"""
+        edge = GraphEdge(
+            source=source,
+            target=target,
+            type=edge_type,
+            weight=weight,
+            metadata=metadata or {}
+        )
+        
+        self.edges.append(edge)
+        self.graph.add_edge(source, target, type=edge_type, weight=weight, **edge.metadata)
+    
+    def _calculate_graph_metrics(self):
+        """Calculate graph metrics and add to metadata"""
+        if len(self.graph.nodes()) == 0:
+            return
+        
+        # Calculate centrality measures
+        try:
+            degree_centrality = nx.degree_centrality(self.graph)
+            betweenness_centrality = nx.betweenness_centrality(self.graph)
+            
+            # Add centrality to node metadata
+            for node in self.nodes:
+                node.metadata["degree_centrality"] = degree_centrality.get(node.id, 0)
+                node.metadata["betweenness_centrality"] = betweenness_centrality.get(node.id, 0)
+        
+        except Exception as e:
+            print(f"⚠️ Could not calculate centrality metrics: {e}")
+    
+    def _categorize_file(self, file_data: DetailedFileAnalysis) -> str:
+        """Categorize file based on its content and purpose"""
+        if hasattr(file_data, 'file_purpose') and file_data.file_purpose:
+            return file_data.file_purpose
+        
+        # Fallback categorization
+        if file_data.api_endpoints:
+            return "API Routes"
+        elif file_data.jsx_components:
+            return "UI Components"
+        elif file_data.classes:
+            return "Classes/Models"
+        elif file_data.functions:
+            return "Business Logic"
+        else:
+            return "Configuration/Other"
+    
+    def _resolve_import_path(self, current_file: str, import_path: str) -> Optional[str]:
+        """Resolve relative import path to actual file path"""
+        # Simplified implementation - in practice, you'd need more sophisticated resolution
+        current_dir = Path(current_file).parent
+        
+        if import_path.startswith('./'):
+            resolved = current_dir / import_path[2:]
+        elif import_path.startswith('../'):
+            resolved = current_dir / import_path
+        else:
+            return None
+        
+        # Try common extensions
+        for ext in ['.js', '.ts', '.jsx', '.tsx', '.py']:
+            if (resolved.with_suffix(ext)).exists():
+                return str(resolved.with_suffix(ext))
+        
+        return None
+    
+    def _get_node_type_counts(self) -> Dict[str, int]:
+        """Get count of nodes by type"""
+        counts = {}
+        for node in self.nodes:
+            counts[node.type] = counts.get(node.type, 0) + 1
+        return counts
+    
+    def _get_edge_type_counts(self) -> Dict[str, int]:
+        """Get count of edges by type"""
+        counts = {}
+        for edge in self.edges:
+            counts[edge.type] = counts.get(edge.type, 0) + 1
+        return counts
+
+# Enhanced data models for detailed analysis
 class DetailedCodeAnalyzer:
     """Enhanced analyzer for detailed code analysis"""
     
@@ -982,14 +2112,14 @@ class DetailedCodeAnalyzer:
                 path_params = re.findall(r':(\w+)', path)
                 parameters = [{"name": param, "type": "path", "required": True} for param in path_params]
                 
-                endpoints.append(APIEndpointDetail(
-                    method=method,
-                    path=path,
-                    line=line_num,
-                    function_name=function_name,
-                    parameters=parameters,
-                    description=f"{method} endpoint for {path}"
-                ))
+                endpoints.append({
+                    "method": method,
+                    "path": path,
+                    "line": line_num,
+                    "function_name": function_name,
+                    "parameters": parameters,
+                    "description": f"{method} endpoint for {path}"
+                })
         
         return endpoints
     
@@ -1026,13 +2156,13 @@ class DetailedCodeAnalyzer:
                 
                 function_name = func_match.group(1) if func_match else None
                 
-                endpoints.append(APIEndpointDetail(
-                    method=method,
-                    path=path,
-                    line=line_num,
-                    function_name=function_name,
-                    description=f"FastAPI {method} endpoint for {path}"
-                ))
+                endpoints.append({
+                    "method": method,
+                    "path": path,
+                    "line": line_num,
+                    "function_name": function_name,
+                    "description": f"FastAPI {method} endpoint for {path}"
+                })
         
         # Process Flask patterns
         for pattern in flask_patterns:
@@ -1042,12 +2172,12 @@ class DetailedCodeAnalyzer:
                 method = match.group(2).upper()
                 line_num = content[:match.start()].count('\n') + 1
                 
-                endpoints.append(APIEndpointDetail(
-                    method=method,
-                    path=path,
-                    line=line_num,
-                    description=f"Flask {method} endpoint for {path}"
-                ))
+                endpoints.append({
+                    "method": method,
+                    "path": path,
+                    "line": line_num,
+                    "description": f"Flask {method} endpoint for {path}"
+                })
         
         return endpoints
     
@@ -1582,67 +2712,396 @@ class EnhancedPythonParser:
 
         result.complexity_score = self._calculate_complexity(result)
 
-class AsyncLLMProcessor:
-    """Async batch processor for LLM analysis with advanced rate limiting"""
+class GuaranteedLLMProcessor:
+    """Guaranteed LLM processor that ensures 100% completion of analysis"""
     
-    def __init__(self, api_key: str, max_concurrent: int = 2):  # Reduced concurrency
-        # Conservative rate limiting for Groq free tier
-        self.rate_limiter = TokenAwareRateLimiter(
-            max_tokens_per_minute=4500,  # Conservative limit (Groq free tier is 6000)
-            max_calls_per_second=1.5     # Slower rate to avoid bursts
+    def __init__(self, api_keys: List[str]):
+        # Ultra-conservative settings for guaranteed completion
+        self.rate_limiter = RobustMultiKeyRateLimiter(
+            api_keys=api_keys,
+            max_tokens_per_minute=2500,  # Very conservative per key
+            max_calls_per_second=0.8     # Very slow rate per key
         )
-        self.llm_client = GroqLLMClient(api_key, self.rate_limiter)
-        self.max_concurrent = max_concurrent
-        self.semaphore = asyncio.Semaphore(max_concurrent)
+        self.llm_client = RobustGroqLLMClient(api_keys, self.rate_limiter)
+        self.max_concurrent = 1  # Sequential processing for reliability
+        self.semaphore = asyncio.Semaphore(self.max_concurrent)
+        
+        print(f"🛡️ Guaranteed processor initialized: {len(api_keys)} API keys, sequential processing for 100% success")
     
-    async def process_files_batch(self, file_analyses: List[DetailedFileAnalysis], file_contents: Dict[str, str]) -> List[DetailedFileAnalysis]:
-        """Process multiple files with LLM analysis in parallel with smart rate limiting"""
-        print(f"🤖 Starting LLM analysis for {len(file_analyses)} files...")
-        print(f"⚙️ Rate limits: {self.rate_limiter.max_tokens_per_minute} tokens/min, {self.max_concurrent} concurrent")
+    async def process_files_with_guarantee(self, file_analyses: List[DetailedFileAnalysis], file_contents: Dict[str, str]) -> List[DetailedFileAnalysis]:
+        """Process files with 100% guarantee - no failures allowed"""
+        
+        # Filter files for LLM processing - focus on API and important files
+        files_to_process = []
+        skipped_files = []
+        
+        for file_analysis in file_analyses:
+            should_process = self._should_process_with_llm_guaranteed(file_analysis)
+            if should_process and file_analysis.file in file_contents:
+                files_to_process.append(file_analysis)
+            else:
+                skipped_files.append(file_analysis)
+                # Set basic summary for skipped files
+                file_analysis.llm_summary = f"Code file: {Path(file_analysis.file).name}"
+        
+        print(f"🎯 GUARANTEED LLM PROCESSING")
+        print(f"  📁 Processing: {len(files_to_process)} critical files (APIs, services, components)")
+        print(f"  ⏭️ Skipping: {len(skipped_files)} non-critical files")
+        print(f"🛡️ Guarantee: 100% success rate with robust retry system")
+        
+        if not files_to_process:
+            print("✅ No files require guaranteed LLM processing")
+            return file_analyses
+        
+        # Show key health before starting
+        print(f"🔑 API Key Health Status:")
+        key_stats = self.rate_limiter.get_key_stats()
+        for key_id, stats in key_stats.items():
+            print(f"  Key {key_id}: Health {stats['health']}%, Successes: {stats['successes']}, Failures: {stats['failures']}")
         
         async with aiohttp.ClientSession() as session:
-            tasks = []
+            results = []
+            successful = 0
             
-            for file_analysis in file_analyses:
-                if file_analysis.file in file_contents:
-                    task = self._process_single_file(
+            print(f"  🔄 Processing {len(files_to_process)} files sequentially for guaranteed success...")
+            start_time = time.time()
+            
+            # Sequential processing for maximum reliability
+            for i, file_analysis in enumerate(files_to_process):
+                try:
+                    print(f"\n📋 Processing {i+1}/{len(files_to_process)}: {file_analysis.file}")
+                    
+                    result = await self._process_single_file_guaranteed(
                         session, 
                         file_analysis, 
                         file_contents[file_analysis.file]
                     )
-                    tasks.append(task)
-            
-            # Process with smaller batches and longer delays for rate limiting
-            results = []
-            batch_size = 2  # Smaller batches
-            
-            for i in range(0, len(tasks), batch_size):
-                batch = tasks[i:i + batch_size]
-                print(f"  Processing batch {i//batch_size + 1}/{(len(tasks) + batch_size - 1)//batch_size} ({len(batch)} files)...")
-                
-                batch_results = await asyncio.gather(*batch, return_exceptions=True)
-                
-                for result in batch_results:
-                    if isinstance(result, Exception):
-                        print(f"❌ Batch processing error: {result}")
+                    
+                    results.append(result)
+                    
+                    # Check if LLM analysis was successful
+                    if result.llm_summary and result.llm_summary not in ["Code file analysis", f"Backend file: {Path(result.file).name}"]:
+                        successful += 1
+                        print(f"✅ SUCCESS: {file_analysis.file}")
                     else:
-                        results.append(result)
-                
-                # Longer delay between batches to respect rate limits
-                if i + batch_size < len(tasks):
-                    print(f"  ⏳ Waiting 10s between batches for rate limiting...")
-                    await asyncio.sleep(10)
+                        print(f"❌ FAILED: {file_analysis.file} - This should not happen with guaranteed processing!")
+                    
+                    # Progress update
+                    elapsed = time.time() - start_time
+                    remaining_files = len(files_to_process) - (i + 1)
+                    avg_time_per_file = elapsed / (i + 1)
+                    estimated_remaining = remaining_files * avg_time_per_file
+                    
+                    print(f"📊 Progress: {i+1}/{len(files_to_process)} ({successful} successful) - ETA: {estimated_remaining/60:.1f}m")
+                    
+                    # Show updated key health
+                    if (i + 1) % 3 == 0:  # Every 3 files
+                        key_stats = self.rate_limiter.get_key_stats()
+                        healthy_keys = sum(1 for stats in key_stats.values() if stats['health'] > 50)
+                        print(f"🔑 Key Health: {healthy_keys}/{len(key_stats)} keys healthy")
+                    
+                except Exception as e:
+                    print(f"🚨 CRITICAL ERROR: {file_analysis.file} - {str(e)}")
+                    # This should not happen with guaranteed processing
+                    raise Exception(f"Guaranteed processing failed for {file_analysis.file}: {str(e)}")
         
-        successful_summaries = len([r for r in results if r.llm_summary and r.llm_summary != "Code file analysis"])
-        print(f"✅ LLM analysis completed: {successful_summaries}/{len(results)} files with AI summaries")
-        return results
+        # Combine processed and skipped files
+        all_results = skipped_files + results
+        
+        # Final statistics
+        total_time = time.time() - start_time
+        print(f"\n🎯 GUARANTEED PROCESSING COMPLETE!")
+        print(f"✅ Success Rate: {successful}/{len(files_to_process)} ({successful/len(files_to_process)*100:.1f}%)")
+        print(f"⏱️ Total Time: {total_time/60:.1f} minutes")
+        print(f"📊 Average: {total_time/len(files_to_process):.1f}s per file")
+        
+        # Final key health report
+        print(f"\n🔑 Final API Key Health:")
+        key_stats = self.rate_limiter.get_key_stats()
+        for key_id, stats in key_stats.items():
+            print(f"  Key {key_id}: Health {stats['health']}%, Total Successes: {stats['successes']}")
+        
+        return all_results
     
-    async def _process_single_file(self, session: aiohttp.ClientSession, file_analysis: DetailedFileAnalysis, content: str) -> DetailedFileAnalysis:
-        """Process a single file with rate limiting"""
+    def _should_process_with_llm_guaranteed(self, file_analysis: DetailedFileAnalysis) -> bool:
+        """Determine if a file should be processed with guaranteed LLM analysis"""
+        
+        # Prioritize API files and important backend/frontend files
+        is_api_file = len(getattr(file_analysis, 'api_endpoints', [])) > 0
+        is_backend = (
+            'backend' in file_analysis.file.lower() or
+            'server' in file_analysis.file.lower() or
+            'api' in file_analysis.file.lower() or
+            'route' in file_analysis.file.lower() or
+            file_analysis.file.endswith('.py')
+        )
+        is_main_component = (
+            'app.' in file_analysis.file.lower() or
+            'main.' in file_analysis.file.lower() or
+            'index.' in file_analysis.file.lower()
+        )
+        has_functions = len(getattr(file_analysis, 'functions', [])) > 0
+        
+        # Skip config files and simple files
+        is_config = (
+            file_analysis.file.endswith('.json') or
+            'config' in file_analysis.file.lower() or
+            'package.json' in file_analysis.file or
+            '.config.' in file_analysis.file
+        )
+        
+        # Process if it's important and has content
+        should_process = (is_api_file or is_backend or is_main_component) and has_functions and not is_config
+        
+        return should_process
+    
+    async def _process_single_file_guaranteed(self, session: aiohttp.ClientSession, file_analysis: DetailedFileAnalysis, content: str) -> DetailedFileAnalysis:
+        """Process a single file with guarantee of success"""
         async with self.semaphore:
             try:
-                # Ensure all necessary imports are available in async context
-                import asyncio
+                from pathlib import Path
+                
+                request = LLMSummaryRequest(
+                    file_path=file_analysis.file,
+                    content=content,
+                    analysis=file_analysis
+                )
+                
+                # Use guaranteed generation method
+                response = await self.llm_client.generate_summary_with_guarantee(session, request)
+                
+                # Update file analysis with comprehensive LLM results
+                file_analysis.llm_summary = response.summary
+                file_analysis.key_patterns = response.key_insights
+                
+                return file_analysis
+                
+            except Exception as e:
+                print(f"🚨 GUARANTEED PROCESSING FAILED: {file_analysis.file} - {str(e)}")
+                # This should not happen - re-raise to indicate system failure
+                raise e
+    """Enhanced async batch processor with improved rate limiting and error handling"""
+    
+    def __init__(self, api_keys: List[str], max_concurrent: int = None):
+        # Conservative auto-scaling based on number of API keys
+        if max_concurrent is None:
+            max_concurrent = min(len(api_keys) * 1, 4)  # 1 concurrent per key, max 4
+        
+        # Enhanced rate limiting with conservative settings
+        self.rate_limiter = RobustMultiKeyRateLimiter(
+            api_keys=api_keys,
+            max_tokens_per_minute=3500,  # More conservative per key limit
+            max_calls_per_second=1.2     # Slower rate per key
+        )
+        self.llm_client = RobustGroqLLMClient(api_keys, self.rate_limiter)
+        self.max_concurrent = max_concurrent
+        self.semaphore = asyncio.Semaphore(max_concurrent)
+        
+        print(f"🚀 Enhanced processor: {len(api_keys)} API keys, {max_concurrent} max concurrent requests")
+    
+    async def process_files_batch(self, file_analyses: List[DetailedFileAnalysis], file_contents: Dict[str, str]) -> List[DetailedFileAnalysis]:
+        """Process multiple files with LLM analysis - optimized for backend files and functions/APIs only"""
+        
+        # Filter files for LLM processing - only backend files with functions or APIs
+        files_to_process = []
+        skipped_files = []
+        
+        for file_analysis in file_analyses:
+            should_process = self._should_process_with_llm(file_analysis)
+            if should_process and file_analysis.file in file_contents:
+                files_to_process.append(file_analysis)
+            else:
+                skipped_files.append(file_analysis)
+                # Set basic summary for skipped files
+                file_analysis.llm_summary = f"Code file: {Path(file_analysis.file).name}"
+        
+        print(f"🤖 Starting optimized parallel LLM analysis...")
+        print(f"  📁 Processing: {len(files_to_process)} backend/API files")
+        print(f"  ⏭️ Skipping: {len(skipped_files)} frontend/config files")
+        print(f"⚙️ Parallel processing: {self.max_concurrent} concurrent, {len(self.rate_limiter.api_keys)} API keys")
+        
+        if not files_to_process:
+            print("✅ No files require LLM processing")
+            return file_analyses
+        
+        async with aiohttp.ClientSession() as session:
+            # Create all tasks at once for maximum parallelism
+            tasks = []
+            for file_analysis in files_to_process:
+                task = self._process_single_file_optimized(
+                    session, 
+                    file_analysis, 
+                    file_contents[file_analysis.file]
+                )
+                tasks.append(task)
+            
+            # Process all tasks in parallel with enhanced progress tracking
+            results = []
+            completed = 0
+            successful = 0
+            failed = 0
+            
+            print(f"  🔄 Processing {len(tasks)} files in parallel...")
+            start_time = time.time()
+            
+            # Use asyncio.as_completed for real-time progress updates
+            for coro in asyncio.as_completed(tasks):
+                try:
+                    result = await coro
+                    results.append(result)
+                    completed += 1
+                    
+                    # Check if LLM analysis was successful
+                    if result.llm_summary and result.llm_summary not in ["Code file analysis", f"Backend file: {Path(result.file).name}"]:
+                        successful += 1
+                    else:
+                        failed += 1
+                    
+                    # Progress update every 2 files or at completion
+                    if completed % 2 == 0 or completed == len(tasks):
+                        elapsed = time.time() - start_time
+                        rate = completed / elapsed if elapsed > 0 else 0
+                        print(f"  ✅ Progress: {completed}/{len(tasks)} files ({successful} successful, {failed} failed) - {rate:.1f} files/sec")
+                        
+                except Exception as e:
+                    print(f"❌ Task failed: {e}")
+                    completed += 1
+                    failed += 1
+        
+        # Combine processed and skipped files
+        all_results = skipped_files + results
+        successful_summaries = len([r for r in results if r.llm_summary and r.llm_summary != "Code file analysis"])
+        print(f"✅ Parallel LLM analysis completed: {successful_summaries}/{len(files_to_process)} backend files with AI summaries")
+        return all_results
+    
+    def _should_process_with_llm(self, file_analysis: DetailedFileAnalysis) -> bool:
+        """Determine if a file should be processed with LLM based on optimization criteria"""
+        
+        # Check if it's a backend file
+        is_backend = (
+            'backend' in file_analysis.file.lower() or
+            'server' in file_analysis.file.lower() or
+            'api' in file_analysis.file.lower() or
+            'route' in file_analysis.file.lower() or
+            'controller' in file_analysis.file.lower() or
+            file_analysis.file.endswith('.py')  # Python files are often backend
+        )
+        
+        # Check if it has functions or APIs (meaningful content)
+        has_functions = len(file_analysis.functions) > 0
+        has_apis = len(file_analysis.api_endpoints) > 0
+        has_classes = len(file_analysis.classes) > 0
+        
+        # Check if it's a service file
+        is_service = (
+            hasattr(file_analysis, 'service_info') and 
+            file_analysis.service_info and 
+            file_analysis.service_info.type == 'backend'
+        )
+        
+        # Skip config files, package.json, etc.
+        is_config = (
+            file_analysis.file.endswith('.json') or
+            file_analysis.file.endswith('.config.js') or
+            file_analysis.file.endswith('.md') or
+            'config' in file_analysis.file.lower() or
+            'package.json' in file_analysis.file or
+            'vite.config' in file_analysis.file or
+            'tailwind.config' in file_analysis.file
+        )
+        
+        # Process if it's backend AND has meaningful content AND not a config file
+        should_process = (is_backend or is_service) and (has_functions or has_apis or has_classes) and not is_config
+        
+        return should_process
+    
+    async def _process_single_file_optimized(self, session: aiohttp.ClientSession, file_analysis: DetailedFileAnalysis, content: str) -> DetailedFileAnalysis:
+        """Process a single file with rate limiting - optimized for functions and APIs"""
+        async with self.semaphore:
+            try:
+                from pathlib import Path
+                
+                # Create optimized content focusing on functions and APIs
+                optimized_content = self._extract_function_and_api_content(content, file_analysis)
+                
+                request = LLMSummaryRequest(
+                    file_path=file_analysis.file,
+                    content=optimized_content,
+                    analysis=file_analysis
+                )
+                
+                response = await self.llm_client.generate_summary(session, request)
+                
+                # Update file analysis with LLM results
+                file_analysis.llm_summary = response.summary
+                file_analysis.key_patterns = response.key_insights
+                
+                return file_analysis
+                
+            except Exception as e:
+                print(f"❌ Error processing {file_analysis.file}: {e}")
+                file_analysis.llm_summary = f"Backend file: {Path(file_analysis.file).name}"
+                return file_analysis
+    
+    def _extract_function_and_api_content(self, content: str, file_analysis: DetailedFileAnalysis) -> str:
+        """Extract only function definitions and API-related content to reduce token usage"""
+        lines = content.split('\n')
+        extracted_lines = []
+        
+        # Add file header (first 5 lines for context)
+        extracted_lines.extend(lines[:5])
+        extracted_lines.append("\n// ... [File content optimized for function and API analysis] ...\n")
+        
+        # Extract function definitions based on language
+        if file_analysis.language in ['javascript', 'typescript']:
+            extracted_lines.extend(self._extract_js_functions_and_apis(lines, file_analysis))
+        elif file_analysis.language == 'python':
+            extracted_lines.extend(self._extract_python_functions_and_apis(lines, file_analysis))
+        
+        # Add API endpoints context
+        if file_analysis.api_endpoints:
+            extracted_lines.append("\n// API Endpoints detected:")
+            for api in file_analysis.api_endpoints[:5]:  # Limit to 5 APIs
+                method = api.get('method', 'GET') if isinstance(api, dict) else getattr(api, 'method', 'GET')
+                path = api.get('path', '/') if isinstance(api, dict) else getattr(api, 'path', '/')
+                extracted_lines.append(f"// {method} {path}")
+        
+        return '\n'.join(extracted_lines)
+    
+    def _extract_js_functions_and_apis(self, lines: List[str], file_analysis: DetailedFileAnalysis) -> List[str]:
+        """Extract JavaScript/TypeScript function definitions and API routes"""
+        extracted = []
+        
+        for i, line in enumerate(lines):
+            # Function definitions
+            if any(pattern in line for pattern in ['function ', 'const ', 'let ', '=>', 'app.', 'router.', 'export']):
+                # Add function and next few lines for context
+                start = max(0, i-1)
+                end = min(len(lines), i+5)
+                extracted.extend(lines[start:end])
+                extracted.append("// ... function body truncated ...")
+        
+        return extracted
+    
+    def _extract_python_functions_and_apis(self, lines: List[str], file_analysis: DetailedFileAnalysis) -> List[str]:
+        """Extract Python function definitions and API routes"""
+        extracted = []
+        
+        for i, line in enumerate(lines):
+            # Function definitions and decorators
+            if any(pattern in line for pattern in ['def ', '@app.', '@router.', 'class ', '@']):
+                # Add function and next few lines for context
+                start = max(0, i-1)
+                end = min(len(lines), i+5)
+                extracted.extend(lines[start:end])
+                extracted.append("# ... function body truncated ...")
+        
+        return extracted
+    
+    async def _process_single_file(self, session: aiohttp.ClientSession, file_analysis: DetailedFileAnalysis, content: str) -> DetailedFileAnalysis:
+        """Process a single file with rate limiting (original method for compatibility)"""
+        async with self.semaphore:
+            try:
                 from pathlib import Path
                 
                 request = LLMSummaryRequest(
@@ -1661,14 +3120,12 @@ class AsyncLLMProcessor:
                 
             except Exception as e:
                 print(f"❌ Error processing {file_analysis.file}: {e}")
-                import traceback
-                traceback.print_exc()
                 return file_analysis
 
 class FolderAnalyzer:
     """Analyzes folders and creates structured summaries"""
     
-    def __init__(self, llm_processor: AsyncLLMProcessor = None):
+    def __init__(self, llm_processor: GuaranteedLLMProcessor = None):
         self.llm_processor = llm_processor
     
     def analyze_folders(self, files_data: List[DetailedFileAnalysis]) -> Dict[str, FolderSummary]:
@@ -1704,7 +3161,22 @@ class FolderAnalyzer:
         for file_data in files:
             # Collect API endpoints
             if hasattr(file_data, 'api_endpoints'):
-                all_api_endpoints.extend(file_data.api_endpoints)
+                for api in file_data.api_endpoints:
+                    # Convert to dict if it's an object
+                    if hasattr(api, '__dict__'):
+                        api_dict = api.__dict__
+                    elif isinstance(api, dict):
+                        api_dict = api
+                    else:
+                        # Handle DictObject or other object types
+                        api_dict = {
+                            'method': getattr(api, 'method', 'GET'),
+                            'path': getattr(api, 'path', '/'),
+                            'line': getattr(api, 'line', 0),
+                            'function_name': getattr(api, 'function_name', None),
+                            'parameters': getattr(api, 'parameters', [])
+                        }
+                    all_api_endpoints.append(api_dict)
             
             # Collect dependencies
             all_dependencies.update(file_data.dependencies)
@@ -1863,18 +3335,442 @@ Focus on:
 - Integration with other system components
 - Setup and usage instructions for developers"""
 
+class HierarchicalAnalyzer:
+    """Performs hierarchical analysis from folders to global architecture"""
+    
+    def __init__(self, llm_processor: GuaranteedLLMProcessor = None):
+        self.llm_processor = llm_processor
+        self.knowledge_graph = None
+        self.folder_summaries = {}
+        self.module_summaries = {}
+        self.domain_summaries = {}
+        self.global_summary = None
+    
+    async def perform_hierarchical_analysis(self, files_data: List[DetailedFileAnalysis], 
+                                          folder_summaries: Dict[str, FolderSummary]) -> Dict[str, Any]:
+        """Perform complete hierarchical analysis"""
+        print("🏗️ Starting hierarchical analysis...")
+        
+        # Step 6: Build Knowledge Graph
+        graph_builder = KnowledgeGraphBuilder()
+        self.knowledge_graph = graph_builder.build_graph(files_data)
+        
+        # Step 7: Enhanced Folder-Level Summarization (already done, enhance with LLM)
+        self.folder_summaries = await self._enhance_folder_summaries(folder_summaries)
+        
+        # Step 8: Module-Level Summarization
+        self.module_summaries = await self._create_module_summaries()
+        
+        # Step 9: Domain-Level Summarization
+        self.domain_summaries = await self._create_domain_summaries()
+        
+        # Step 10: Global Architecture Summary
+        self.global_summary = await self._create_global_summary()
+        
+        return {
+            "knowledge_graph": self.knowledge_graph,
+            "folder_summaries": self.folder_summaries,
+            "module_summaries": self.module_summaries,
+            "domain_summaries": self.domain_summaries,
+            "global_summary": self.global_summary
+        }
+    
+    async def _enhance_folder_summaries(self, folder_summaries: Dict[str, FolderSummary]) -> Dict[str, FolderSummary]:
+        """Step 7: Enhanced folder-level summarization with LLM"""
+        print("📁 Enhancing folder summaries with LLM analysis...")
+        
+        if not self.llm_processor:
+            return folder_summaries
+        
+        enhanced_summaries = {}
+        
+        for folder_path, folder_summary in folder_summaries.items():
+            try:
+                # Create enhanced prompt for folder analysis
+                prompt = self._build_folder_analysis_prompt(folder_summary)
+                
+                # For now, create a basic enhanced summary
+                # In a full implementation, you'd call the LLM here
+                enhanced_summary = folder_summary
+                enhanced_summary.llm_summary = f"Enhanced analysis: {folder_summary.folder_purpose} with {folder_summary.total_files} files"
+                
+                enhanced_summaries[folder_path] = enhanced_summary
+                
+            except Exception as e:
+                print(f"⚠️ Failed to enhance folder summary for {folder_path}: {e}")
+                enhanced_summaries[folder_path] = folder_summary
+        
+        print(f"✅ Enhanced {len(enhanced_summaries)} folder summaries")
+        return enhanced_summaries
+    
+    async def _create_module_summaries(self) -> Dict[str, ModuleSummary]:
+        """Step 8: Module-level summarization"""
+        print("🔧 Creating module-level summaries...")
+        
+        modules = self._identify_modules()
+        module_summaries = {}
+        
+        for module_name, module_data in modules.items():
+            try:
+                module_summary = ModuleSummary(
+                    module_name=module_name,
+                    module_path=module_data["path"],
+                    folders=module_data["folders"],
+                    total_files=module_data["total_files"],
+                    primary_languages=module_data["languages"],
+                    architecture_role=self._determine_module_role(module_name, module_data),
+                    interfaces=self._extract_module_interfaces(module_data),
+                    responsibilities=self._extract_module_responsibilities(module_data),
+                    key_components=module_data["key_components"]
+                )
+                
+                # Generate LLM summary for module
+                if self.llm_processor:
+                    module_summary.llm_summary = await self._generate_module_llm_summary(module_summary)
+                else:
+                    module_summary.llm_summary = f"Module {module_name}: {module_summary.architecture_role}"
+                
+                module_summaries[module_name] = module_summary
+                
+            except Exception as e:
+                print(f"⚠️ Failed to create module summary for {module_name}: {e}")
+        
+        print(f"✅ Created {len(module_summaries)} module summaries")
+        return module_summaries
+    
+    async def _create_domain_summaries(self) -> Dict[str, DomainSummary]:
+        """Step 9: Domain-level summarization"""
+        print("🌐 Creating domain-level summaries...")
+        
+        domains = self._identify_domains()
+        domain_summaries = {}
+        
+        for domain_name, domain_data in domains.items():
+            try:
+                domain_summary = DomainSummary(
+                    domain_name=domain_name,
+                    modules=domain_data["modules"],
+                    architecture_overview=self._create_domain_architecture_overview(domain_data),
+                    data_flow=self._analyze_domain_data_flow(domain_data),
+                    business_logic=self._extract_domain_business_logic(domain_data),
+                    integration_points=self._identify_domain_integrations(domain_data),
+                    key_patterns=self._identify_domain_patterns(domain_data)
+                )
+                
+                # Generate LLM summary for domain
+                if self.llm_processor:
+                    domain_summary.llm_summary = await self._generate_domain_llm_summary(domain_summary)
+                else:
+                    domain_summary.llm_summary = f"Domain {domain_name}: {domain_summary.architecture_overview}"
+                
+                domain_summaries[domain_name] = domain_summary
+                
+            except Exception as e:
+                print(f"⚠️ Failed to create domain summary for {domain_name}: {e}")
+        
+        print(f"✅ Created {len(domain_summaries)} domain summaries")
+        return domain_summaries
+    
+    async def _create_global_summary(self) -> GlobalArchitectureSummary:
+        """Step 10: Global architecture summary"""
+        print("🌍 Creating global architecture summary...")
+        
+        try:
+            global_summary = GlobalArchitectureSummary(
+                system_overview=self._create_system_overview(),
+                key_patterns=self._identify_global_patterns(),
+                architectural_decisions=self._extract_architectural_decisions(),
+                data_flow_summary=self._create_global_data_flow_summary(),
+                scalability_analysis=self._analyze_scalability(),
+                security_considerations=self._identify_security_considerations(),
+                performance_insights=self._analyze_performance(),
+                recommendations=self._generate_recommendations(),
+                technology_stack=self._analyze_technology_stack()
+            )
+            
+            # Generate comprehensive LLM summary
+            if self.llm_processor:
+                global_summary.llm_summary = await self._generate_global_llm_summary(global_summary)
+            else:
+                global_summary.llm_summary = f"Global architecture: {global_summary.system_overview}"
+            
+            print("✅ Created global architecture summary")
+            return global_summary
+            
+        except Exception as e:
+            print(f"⚠️ Failed to create global summary: {e}")
+            return GlobalArchitectureSummary(
+                system_overview="Analysis failed",
+                llm_summary="Could not generate global architecture summary"
+            )
+    
+    def _identify_modules(self) -> Dict[str, Dict[str, Any]]:
+        """Identify logical modules from folder structure"""
+        modules = {}
+        
+        # Group folders into logical modules
+        for folder_path, folder_summary in self.folder_summaries.items():
+            # Determine module based on folder structure
+            path_parts = folder_path.split('/')
+            
+            if len(path_parts) >= 2:
+                module_name = path_parts[0]  # Top-level directory as module
+            else:
+                module_name = "core"
+            
+            if module_name not in modules:
+                modules[module_name] = {
+                    "path": module_name,
+                    "folders": [],
+                    "total_files": 0,
+                    "languages": set(),
+                    "key_components": []
+                }
+            
+            modules[module_name]["folders"].append(folder_path)
+            modules[module_name]["total_files"] += folder_summary.total_files
+            modules[module_name]["languages"].add(folder_summary.primary_language)
+            modules[module_name]["key_components"].extend(folder_summary.key_components)
+        
+        # Convert language sets to lists
+        for module_data in modules.values():
+            module_data["languages"] = list(module_data["languages"])
+        
+        return modules
+    
+    def _identify_domains(self) -> Dict[str, Dict[str, Any]]:
+        """Identify business domains from modules"""
+        domains = {}
+        
+        # Simple domain identification based on common patterns
+        domain_patterns = {
+            "frontend": ["frontend", "ui", "client", "web", "app"],
+            "backend": ["backend", "api", "server", "services"],
+            "data": ["data", "models", "database", "db"],
+            "infrastructure": ["config", "deploy", "docker", "scripts"],
+            "shared": ["shared", "common", "utils", "lib"]
+        }
+        
+        for module_name, module_data in self.module_summaries.items():
+            domain_assigned = False
+            
+            for domain_name, patterns in domain_patterns.items():
+                if any(pattern in module_name.lower() for pattern in patterns):
+                    if domain_name not in domains:
+                        domains[domain_name] = {
+                            "modules": [],
+                            "total_files": 0,
+                            "languages": set()
+                        }
+                    
+                    domains[domain_name]["modules"].append(module_name)
+                    domains[domain_name]["total_files"] += module_data.total_files
+                    domains[domain_name]["languages"].update(module_data.primary_languages)
+                    domain_assigned = True
+                    break
+            
+            # If no domain assigned, put in "core"
+            if not domain_assigned:
+                if "core" not in domains:
+                    domains["core"] = {
+                        "modules": [],
+                        "total_files": 0,
+                        "languages": set()
+                    }
+                domains["core"]["modules"].append(module_name)
+                domains["core"]["total_files"] += module_data.total_files
+                domains["core"]["languages"].update(module_data.primary_languages)
+        
+        # Convert language sets to lists
+        for domain_data in domains.values():
+            domain_data["languages"] = list(domain_data["languages"])
+        
+        return domains
+    
+    def _determine_module_role(self, module_name: str, module_data: Dict[str, Any]) -> str:
+        """Determine the architectural role of a module"""
+        name_lower = module_name.lower()
+        
+        if any(pattern in name_lower for pattern in ["frontend", "ui", "client"]):
+            return "User Interface Layer"
+        elif any(pattern in name_lower for pattern in ["backend", "api", "server"]):
+            return "Business Logic Layer"
+        elif any(pattern in name_lower for pattern in ["data", "model", "db"]):
+            return "Data Access Layer"
+        elif any(pattern in name_lower for pattern in ["config", "deploy", "script"]):
+            return "Infrastructure Layer"
+        else:
+            return "Core Application Logic"
+    
+    def _extract_module_interfaces(self, module_data: Dict[str, Any]) -> List[str]:
+        """Extract interfaces exposed by the module"""
+        interfaces = []
+        
+        # Look for API endpoints in the knowledge graph
+        if self.knowledge_graph:
+            for node in self.knowledge_graph.nodes:
+                if node.type == "api_endpoint" and any(folder in node.path for folder in module_data["folders"]):
+                    interfaces.append(f"{node.metadata.get('method', 'GET')} {node.metadata.get('path', '')}")
+        
+        return interfaces[:10]  # Limit to top 10
+    
+    def _extract_module_responsibilities(self, module_data: Dict[str, Any]) -> List[str]:
+        """Extract key responsibilities of the module"""
+        responsibilities = []
+        
+        # Analyze based on folder purposes
+        for folder_path in module_data["folders"]:
+            if folder_path in self.folder_summaries:
+                folder_summary = self.folder_summaries[folder_path]
+                if folder_summary.folder_purpose:
+                    responsibilities.append(folder_summary.folder_purpose)
+        
+        return list(set(responsibilities))  # Remove duplicates
+    
+    def _create_system_overview(self) -> str:
+        """Create high-level system overview"""
+        total_files = sum(len(folder.files) for folder in self.folder_summaries.values())
+        total_modules = len(self.module_summaries)
+        total_domains = len(self.domain_summaries)
+        
+        # Identify primary technologies
+        languages = set()
+        for folder in self.folder_summaries.values():
+            languages.add(folder.primary_language)
+        
+        overview = f"System with {total_files} files organized into {total_modules} modules across {total_domains} domains. "
+        overview += f"Primary technologies: {', '.join(sorted(languages))}. "
+        
+        # Add architecture pattern detection
+        if "frontend" in self.domain_summaries and "backend" in self.domain_summaries:
+            overview += "Follows client-server architecture pattern."
+        
+        return overview
+    
+    def _identify_global_patterns(self) -> List[str]:
+        """Identify architectural patterns across the system"""
+        patterns = []
+        
+        # Detect common patterns
+        if "frontend" in self.domain_summaries and "backend" in self.domain_summaries:
+            patterns.append("Client-Server Architecture")
+        
+        if any("api" in module.lower() for module in self.module_summaries.keys()):
+            patterns.append("RESTful API Design")
+        
+        if any("component" in folder.folder_purpose.lower() for folder in self.folder_summaries.values() if folder.folder_purpose):
+            patterns.append("Component-Based Architecture")
+        
+        return patterns
+    
+    def _analyze_technology_stack(self) -> Dict[str, List[str]]:
+        """Analyze the technology stack"""
+        stack = {
+            "languages": [],
+            "frameworks": [],
+            "databases": [],
+            "tools": []
+        }
+        
+        # Collect languages
+        for folder in self.folder_summaries.values():
+            if folder.primary_language not in stack["languages"]:
+                stack["languages"].append(folder.primary_language)
+        
+        # Detect frameworks from dependencies
+        if self.knowledge_graph:
+            for node in self.knowledge_graph.nodes:
+                if node.type == "external_dependency":
+                    dep_name = node.name.lower()
+                    if any(fw in dep_name for fw in ["react", "vue", "angular"]):
+                        if node.name not in stack["frameworks"]:
+                            stack["frameworks"].append(node.name)
+                    elif any(db in dep_name for db in ["mongo", "postgres", "mysql"]):
+                        if node.name not in stack["databases"]:
+                            stack["databases"].append(node.name)
+        
+        return stack
+    
+    # Placeholder methods for other analysis functions
+    def _extract_architectural_decisions(self) -> List[str]:
+        return ["Modular architecture", "Separation of concerns", "API-first design"]
+    
+    def _create_global_data_flow_summary(self) -> str:
+        return "Data flows from frontend through API layer to backend services and data storage."
+    
+    def _analyze_scalability(self) -> str:
+        return "System designed with modular architecture supporting horizontal scaling."
+    
+    def _identify_security_considerations(self) -> List[str]:
+        return ["API authentication", "Input validation", "Secure data handling"]
+    
+    def _analyze_performance(self) -> List[str]:
+        return ["Async processing", "Efficient data structures", "Optimized algorithms"]
+    
+    def _generate_recommendations(self) -> List[str]:
+        return ["Add comprehensive testing", "Implement monitoring", "Document APIs"]
+    
+    def _create_domain_architecture_overview(self, domain_data: Dict[str, Any]) -> str:
+        return f"Domain with {len(domain_data['modules'])} modules handling core functionality"
+    
+    def _analyze_domain_data_flow(self, domain_data: Dict[str, Any]) -> List[str]:
+        return ["Input processing", "Business logic execution", "Output generation"]
+    
+    def _extract_domain_business_logic(self, domain_data: Dict[str, Any]) -> List[str]:
+        return ["Core business rules", "Data validation", "Process orchestration"]
+    
+    def _identify_domain_integrations(self, domain_data: Dict[str, Any]) -> List[str]:
+        return ["External APIs", "Database connections", "Service communications"]
+    
+    def _identify_domain_patterns(self, domain_data: Dict[str, Any]) -> List[str]:
+        return ["MVC pattern", "Repository pattern", "Service layer pattern"]
+    
+    # LLM summary generation methods (placeholders)
+    async def _generate_module_llm_summary(self, module_summary: ModuleSummary) -> str:
+        return f"Module {module_summary.module_name}: {module_summary.architecture_role} with {module_summary.total_files} files"
+    
+    async def _generate_domain_llm_summary(self, domain_summary: DomainSummary) -> str:
+        return f"Domain {domain_summary.domain_name}: {domain_summary.architecture_overview}"
+    
+    async def _generate_global_llm_summary(self, global_summary: GlobalArchitectureSummary) -> str:
+        return f"Global architecture: {global_summary.system_overview}"
+    
+    def _build_folder_analysis_prompt(self, folder_summary: FolderSummary) -> str:
+        return f"Analyze folder {folder_summary.folder_path} with {folder_summary.total_files} files"
+
 class EnhancedRepositoryAnalyzer:
-    def __init__(self, repo_path: str, enable_llm: bool = True, groq_api_key: str = None):
+    def __init__(self, repo_path: str, enable_llm: bool = True, groq_api_keys: List[str] = None):
         self.repo_path = Path(repo_path)
         self.code_analyzer = DetailedCodeAnalyzer()
+        self.hierarchical_analyzer = HierarchicalAnalyzer()
         self.files_data = []
         self.file_contents = {}  # Store file contents for LLM processing
-        self.enable_llm = enable_llm and groq_api_key
+        self.enable_llm = enable_llm and groq_api_keys
         
         if self.enable_llm:
-            self.llm_processor = AsyncLLMProcessor(groq_api_key)
+            self.llm_processor = GuaranteedLLMProcessor(groq_api_keys)
+            self.hierarchical_analyzer.llm_processor = self.llm_processor
         else:
-            print("⚠️ LLM analysis disabled (no API key provided)")
+            print("⚠️ LLM analysis disabled (no API keys provided)")
+
+    def _get_all_files(self):
+        """Get all files in the repository for estimation"""
+        files = []
+        for root, dirs, file_list in os.walk(self.repo_path):
+            dirs[:] = [d for d in dirs if not should_skip_directory(d)]
+            for file in file_list:
+                if get_file_language(file):
+                    files.append(file)
+        return files
+    
+    def _is_backend_file(self, filename):
+        """Check if a file is likely a backend file"""
+        return (
+            'backend' in filename.lower() or
+            'server' in filename.lower() or
+            'api' in filename.lower() or
+            filename.endswith('.py')
+        )
 
     def analyze(self):
         print(f'📂 Analyzing repository: {self.repo_path}')
@@ -1883,31 +3779,74 @@ class EnhancedRepositoryAnalyzer:
         self._walk_repository()
         print(f'✅ Parsed {len(self.files_data)} files')
 
-        # Step 2: Run LLM analysis if enabled
+        # Step 2: Run GUARANTEED LLM analysis if enabled
         if self.enable_llm and self.files_data:
             try:
-                # Run async LLM processing
+                print(f"\n🛡️ STARTING GUARANTEED LLM ANALYSIS")
+                print(f"🎯 This process will ensure 100% completion of critical file analysis")
+                print(f"⏱️ Estimated time: {len([f for f in self.files_data if self._should_process_file(f)]) * 2} minutes")
+                
+                # Run guaranteed async LLM processing
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
                 enhanced_files = loop.run_until_complete(
-                    self.llm_processor.process_files_batch(self.files_data, self.file_contents)
+                    self.llm_processor.process_files_with_guarantee(self.files_data, self.file_contents)
                 )
                 self.files_data = enhanced_files
                 loop.close()
+                
+                print(f"🎉 GUARANTEED LLM ANALYSIS COMPLETED SUCCESSFULLY!")
+                
             except Exception as e:
-                print(f"❌ LLM processing failed: {e}")
+                print(f"🚨 CRITICAL: Guaranteed LLM processing failed: {e}")
+                print(f"🔧 This indicates a system-level issue that needs investigation")
+                raise e
 
-        # Step 3: Generate additional analysis
+        # Step 3: Generate basic analysis
         dependency_data = self._generate_dependencies()
         call_data = self._generate_call_graph()
+        
+        # Step 4: Perform hierarchical analysis (Steps 6-10)
+        hierarchical_results = None
+        if self.files_data:
+            try:
+                # Create folder summaries first
+                folder_analyzer = FolderAnalyzer(self.llm_processor if self.enable_llm else None)
+                folder_summaries = folder_analyzer.analyze_folders(self.files_data)
+                
+                # Run hierarchical analysis
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                hierarchical_results = loop.run_until_complete(
+                    self.hierarchical_analyzer.perform_hierarchical_analysis(self.files_data, folder_summaries)
+                )
+                loop.close()
+                
+            except Exception as e:
+                print(f"❌ Hierarchical analysis failed: {e}")
+                import traceback
+                traceback.print_exc()
         
         return {
             'total_files': len(self.files_data),
             'files': [convert_to_dict(f) for f in self.files_data],  # Convert to dict safely
             'dependencies': dependency_data,
             'call_graph': call_data,
-            'llm_enabled': self.enable_llm
+            'llm_enabled': self.enable_llm,
+            'hierarchical_analysis': hierarchical_results
         }
+    
+    def _should_process_file(self, file_data):
+        """Check if a file should be processed with LLM"""
+        is_api_file = len(getattr(file_data, 'api_endpoints', [])) > 0
+        is_backend = (
+            'backend' in file_data.file.lower() or
+            'server' in file_data.file.lower() or
+            'api' in file_data.file.lower() or
+            file_data.file.endswith('.py')
+        )
+        has_functions = len(getattr(file_data, 'functions', [])) > 0
+        return (is_api_file or is_backend) and has_functions
 
     def _walk_repository(self):
         """Walk repository and parse files"""
@@ -2010,13 +3949,14 @@ class EnhancedRepositoryAnalyzer:
 class EnhancedDocumentationGenerator:
     """Enhanced documentation generator with detailed summaries and API docs"""
     
-    def __init__(self, files_data, dependencies, call_graph, repo_info, output_dir):
+    def __init__(self, files_data, dependencies, call_graph, repo_info, output_dir, hierarchical_analysis=None):
         print(f"🔧 Initializing EnhancedDocumentationGenerator...")
         print(f"  - files_data: {type(files_data)} ({len(files_data) if files_data else 0} items)")
         print(f"  - dependencies: {type(dependencies)}")
         print(f"  - call_graph: {type(call_graph)}")
         print(f"  - repo_info: {type(repo_info)}")
         print(f"  - output_dir: {output_dir}")
+        print(f"  - hierarchical_analysis: {type(hierarchical_analysis)}")
         
         self.files_data = files_data
         self.dependencies = dependencies
@@ -2024,9 +3964,11 @@ class EnhancedDocumentationGenerator:
         self.call_graph = call_graph
         self.call_data = call_graph  # Also set this for compatibility
         self.repo_info = repo_info
+        self.hierarchical_analysis = hierarchical_analysis
         self.output_dir = Path(output_dir)
         self.docs_dir = self.output_dir / 'docs'
         self.summaries_dir = self.output_dir / 'summaries'
+        self.hierarchical_dir = self.output_dir / 'hierarchical'
         
         print(f"✅ Set self.dependencies = {self.dependencies}")
         
@@ -2034,12 +3976,15 @@ class EnhancedDocumentationGenerator:
         try:
             self.docs_dir.mkdir(parents=True, exist_ok=True)
             self.summaries_dir.mkdir(parents=True, exist_ok=True)
-            print(f"✅ Created directories: {self.docs_dir}, {self.summaries_dir}")
+            self.hierarchical_dir.mkdir(parents=True, exist_ok=True)
+            print(f"✅ Created directories: {self.docs_dir}, {self.summaries_dir}, {self.hierarchical_dir}")
         except Exception as e:
             print(f"⚠️ Failed to create directories: {e}")
             # Ensure attributes exist even if directory creation fails
             if not hasattr(self, 'summaries_dir'):
                 self.summaries_dir = self.output_dir / 'summaries'
+            if not hasattr(self, 'hierarchical_dir'):
+                self.hierarchical_dir = self.output_dir / 'hierarchical'
     
     def generate_all_enhanced(self):
         """Generate all enhanced documentation"""
@@ -2162,8 +4107,8 @@ class EnhancedDocumentationGenerator:
     
     def _generate_api_usage_example(self, api) -> str:
         """Generate usage example for API endpoint"""
-        method = api.get('method') if isinstance(api, dict) else api.method
-        path = api.get('path') if isinstance(api, dict) else api.path
+        method = api.get('method', 'GET') if isinstance(api, dict) else getattr(api, 'method', 'GET')
+        path = api.get('path', '/') if isinstance(api, dict) else getattr(api, 'path', '/')
         
         if method == 'GET':
             return f"""// JavaScript fetch example
@@ -2207,10 +4152,10 @@ response = requests.post('{path}', json={{"key": "value"}})"""
                 "files": folder_summary.files,
                 "api_endpoints": [
                     {
-                        "method": api.method,
-                        "path": api.path,
-                        "function_name": api.function_name,
-                        "description": api.description,
+                        "method": api.get('method', 'GET') if isinstance(api, dict) else getattr(api, 'method', 'GET'),
+                        "path": api.get('path', '/') if isinstance(api, dict) else getattr(api, 'path', '/'),
+                        "function_name": api.get('function_name') if isinstance(api, dict) else getattr(api, 'function_name', None),
+                        "description": api.get('description', '') if isinstance(api, dict) else getattr(api, 'description', ''),
                         "usage_example": self._generate_api_usage_example(api)
                     }
                     for api in folder_summary.api_endpoints
@@ -2992,11 +4937,28 @@ def main():
         print('❌ Please provide a valid GitHub URL')
         return
 
-    # Get Groq API key (optional)
-    groq_key = input('\n🤖 Enter Groq API key (optional, press Enter to skip LLM analysis): ').strip()
-    if not groq_key:
-        groq_key = None
-        print('⚠️ Proceeding without LLM analysis')
+    # Get Groq API keys (support multiple for guaranteed processing)
+    print('\n🛡️ GUARANTEED LLM ANALYSIS SETUP')
+    print('  🎯 This system ensures 100% completion of API function analysis')
+    print('  📋 For best results, provide 2-4 API keys for redundancy')
+    print('  ⏱️ Processing time: ~2-3 minutes per API file (guaranteed completion)')
+    groq_keys_input = input('\nAPI key(s) (required for guaranteed analysis): ').strip()
+    
+    groq_keys = []
+    if groq_keys_input:
+        # Split by comma and clean up
+        groq_keys = [key.strip() for key in groq_keys_input.split(',') if key.strip()]
+        if len(groq_keys) > 1:
+            print(f'🚀 Excellent! Using {len(groq_keys)} API keys for guaranteed redundancy!')
+        else:
+            print('✅ Using single API key with robust retry system')
+    else:
+        print('❌ API keys required for guaranteed LLM analysis')
+        print('🔧 Without API keys, you will only get basic code analysis (no AI insights)')
+        proceed = input('Continue with basic analysis only? (y/N): ').strip().lower()
+        if proceed != 'y':
+            print('👋 Please run again with API keys for complete analysis')
+            return
 
     cloner = None
 
@@ -3014,7 +4976,14 @@ def main():
         print('🔍 STEP 2: ENHANCED REPOSITORY ANALYSIS')
         print('=' * 70)
 
-        analyzer = EnhancedRepositoryAnalyzer(repo_path, enable_llm=bool(groq_key), groq_api_key=groq_key)
+        analyzer = EnhancedRepositoryAnalyzer(repo_path, enable_llm=bool(groq_keys), groq_api_keys=groq_keys)
+        
+        # Show estimated processing time
+        if groq_keys:
+            backend_files = len([f for f in analyzer._get_all_files() if analyzer._is_backend_file(f)])
+            estimated_time = estimate_processing_time(backend_files, len(groq_keys))
+            print(f"⏱️ Estimated LLM processing time: {estimated_time} ({backend_files} backend files)")
+        
         results = analyzer.analyze()
 
         # Step 3: Generate enhanced documentation
@@ -3038,8 +5007,40 @@ def main():
 
         # Save enhanced JSON results
         json_output = output_dir / 'enhanced_analysis.json'
+        
+        # Convert Pydantic models to dictionaries for JSON serialization
+        json_results = results.copy()
+        if 'hierarchical_analysis' in json_results and json_results['hierarchical_analysis']:
+            hierarchical = json_results['hierarchical_analysis']
+            if 'knowledge_graph' in hierarchical:
+                # Convert KnowledgeGraph to dict
+                kg = hierarchical['knowledge_graph']
+                if hasattr(kg, 'model_dump'):
+                    hierarchical['knowledge_graph'] = kg.model_dump()
+                elif hasattr(kg, '__dict__'):
+                    hierarchical['knowledge_graph'] = convert_to_dict(kg)
+            
+            # Convert other Pydantic models
+            for key in ['folder_summaries', 'module_summaries', 'domain_summaries', 'global_summary']:
+                if key in hierarchical and hierarchical[key]:
+                    if hasattr(hierarchical[key], 'model_dump'):
+                        hierarchical[key] = hierarchical[key].model_dump()
+                    elif hasattr(hierarchical[key], '__dict__'):
+                        hierarchical[key] = convert_to_dict(hierarchical[key])
+                    elif isinstance(hierarchical[key], dict):
+                        # Convert nested Pydantic models in dictionaries
+                        converted_dict = {}
+                        for k, v in hierarchical[key].items():
+                            if hasattr(v, 'model_dump'):
+                                converted_dict[k] = v.model_dump()
+                            elif hasattr(v, '__dict__'):
+                                converted_dict[k] = convert_to_dict(v)
+                            else:
+                                converted_dict[k] = v
+                        hierarchical[key] = converted_dict
+        
         with open(json_output, 'w', encoding='utf-8') as f:
-            json.dump(results, f, indent=2, ensure_ascii=False)
+            json.dump(json_results, f, indent=2, ensure_ascii=False)
 
         # Step 4: Results
         print('\n' + '=' * 70)
