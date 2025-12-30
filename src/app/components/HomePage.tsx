@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Zap, FileText, Code, Github, BookOpen, Upload, Download, Menu, X, ArrowRight, GitBranch, Clock } from 'lucide-react';
 import Navbar from './Navbar';
+import Image from 'next/image';
 
 export default function Git2Docs() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -191,7 +192,15 @@ export default function Git2Docs() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-6 h-6 text-blue-400" />
+                <div className="flex h-9 w-9 items-center justify-center">
+                              <Image 
+                                src="/favicon.svg" 
+                                alt="Git2Docs Logo" 
+                                width={36} 
+                                height={36}
+                                className="transition-transform duration-300 group-hover:scale-110"
+                              />
+                            </div>
                 <span className="text-2xl font-bold">Git2Docs</span>
               </div>
               <p className="text-slate-300">AI-powered documentation generation for modern developers</p>
