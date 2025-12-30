@@ -79,7 +79,7 @@ const Login: React.FC<LoginProps> = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      await fetch('http://localhost:3005/api/users', {
+      await fetch('http://localhost:8000/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -90,7 +90,7 @@ const Login: React.FC<LoginProps> = () => {
         }),
       });
 
-      router.push('/chatbot'); // Redirect after signup
+      router.push('/git-to-docs'); // Redirect after signup
 
     } catch (error: any) {
       setError(error.message);
@@ -109,7 +109,7 @@ const Login: React.FC<LoginProps> = () => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      await fetch('http://localhost:3005/api/users', {
+      await fetch('http://localhost:8000/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,7 +120,7 @@ const Login: React.FC<LoginProps> = () => {
         }),
       });
 
-      router.push('/chatbot'); // Redirect after login
+      router.push('/git-to-docs'); // Redirect after login
 
     } catch (error: any) {
       setError(error.message);
@@ -139,7 +139,7 @@ const Login: React.FC<LoginProps> = () => {
       const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
 
-      await fetch('http://localhost:3005/api/users', {
+      await fetch('http://localhost:8000/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -150,7 +150,7 @@ const Login: React.FC<LoginProps> = () => {
         }),
       });
 
-      router.push('/chatbot'); // Redirect after Google login
+      router.push('/git-to-docs'); // Redirect after Google login
 
     } catch (error: any) {
       setError(error.message);
@@ -250,7 +250,7 @@ const Login: React.FC<LoginProps> = () => {
             {/* Logo */}
             <div className="mb-6 flex-shrink-0">
               <div className="flex items-center justify-center lg:justify-start">
-                <span className="text-xl font-semibold text-black">INFINITY</span>
+                <span className="text-xl font-semibold text-black">GIT2DOCS</span>
               </div>
             </div>
 
