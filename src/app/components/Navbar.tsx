@@ -1,11 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Github} from 'lucide-react';
+import { Menu, X, Github, LogOut } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { auth } from '../../../firebase-config';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const navLinks = [
     { name: 'Features', href: '#features' },
@@ -13,6 +20,25 @@ const Navbar = () => {
     { name: 'Pricing', href: '#pricing' },
     { name: 'Docs', href: '#docs' },
   ];
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      router.push('/');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
@@ -46,16 +72,33 @@ const Navbar = () => {
             ))}
           </div>
 
-     
           <div className="hidden md:flex items-center gap-3">
             <Button variant="ghost" size="sm" className="gap-2">
               <Github className="h-4 w-4" />
               GitHub
             </Button>
-            <Link href="/login" >
-            <Button variant="default" size="sm">
-              Login
-            </Button></Link>
+            
+            {loading ? (
+              <Button variant="default" size="sm" disabled>
+                Loading...
+              </Button>
+            ) : user ? (
+              <Button 
+                variant="default" 
+                size="sm" 
+                className="gap-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            ) : (
+              <Link href="/login">
+                <Button variant="default" size="sm">
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -86,9 +129,31 @@ const Navbar = () => {
                   <Github className="h-4 w-4" />
                   GitHub
                 </Button>
-                <Button variant="default" size="sm">
-                  Get Started
-                </Button>
+                
+                {loading ? (
+                  <Button variant="default" size="sm" disabled>
+                    Loading...
+                  </Button>
+                ) : user ? (
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    className="justify-start gap-2"
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </Button>
+                ) : (
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="default" size="sm" className="w-full">
+                      Login
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
