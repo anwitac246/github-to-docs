@@ -1,0 +1,1 @@
+"""GitHub Documentation Generator Backend Application."""

@@ -33,6 +33,13 @@ from dataclasses import dataclass
 from git import Repo
 import aiohttp
 
+# Import the enhanced LLM processor
+try:
+    from llm.enhanced_processor import EnhancedLLMProcessor
+except ImportError:
+    # Fallback if import fails
+    EnhancedLLMProcessor = None
+
 @dataclass
 class EnhancedAPIEndpoint:
     method: str
@@ -430,213 +437,6 @@ class EnhancedCodeExtractor:
             return "Configuration"
         
         return "General Purpose"
-
-class EnhancedLLMProcessor:
-    """Enhanced LLM processor for comprehensive documentation."""
-    """Enhanced LLM processor for comprehensive documentation."""
-    
-    def __init__(self, api_keys: List[str]):
-        self.api_keys = api_keys
-        self.current_key_index = 0
-    
-    async def process_files_comprehensive(self, files_data: List[EnhancedFileAnalysis]) -> Dict[str, Any]:
-        """Process files with comprehensive LLM analysis."""
-        
-        if not self.api_keys:
-            return {"error": "No API keys provided"}
-        
-        print(f"🤖 Processing {len(files_data)} files with comprehensive LLM analysis...")
-        
-        results = {}
-        
-        async with aiohttp.ClientSession() as session:
-            for file_analysis in files_data:
-                try:
-                    # Create comprehensive prompt
-                    prompt = self._create_comprehensive_prompt(file_analysis)
-                    
-                    # Call LLM
-                    response = await self._call_llm_comprehensive(session, prompt)
-                    
-                    results[file_analysis.file_path] = {
-                        "comprehensive_documentation": response,
-                        "file_analysis": {
-                            "purpose": file_analysis.file_purpose,
-                            "api_count": len(file_analysis.api_endpoints),
-                            "function_count": len(file_analysis.functions),
-                            "language": file_analysis.language,
-                            "lines_of_code": file_analysis.lines_of_code,
-                            "dependencies": file_analysis.dependencies,
-                            "is_backend": file_analysis.is_backend
-                        },
-                        "apis": [
-                            {
-                                "method": api.method,
-                                "path": api.path,
-                                "function": api.function_name,
-                                "description": api.description,
-                                "parameters": api.parameters
-                            } for api in file_analysis.api_endpoints
-                        ],
-                        "functions": [
-                            {
-                                "name": func.name,
-                                "params": func.params,
-                                "return_type": func.return_type,
-                                "complexity": func.complexity,
-                                "docstring": func.docstring,
-                                "is_api_handler": func.is_api_handler
-                            } for func in file_analysis.functions
-                        ]
-                    }
-                    
-                    print(f"✅ Processed {file_analysis.file_path}")
-                    
-                except Exception as e:
-                    print(f"❌ Error processing {file_analysis.file_path}: {e}")
-                    results[file_analysis.file_path] = {"error": str(e)}
-        
-        return results
-    
-    def _create_comprehensive_prompt(self, file_analysis: EnhancedFileAnalysis) -> str:
-        """Create comprehensive prompt for detailed documentation."""
-        
-        prompt = f"""Create COMPREHENSIVE documentation for this {file_analysis.language} file:
-
-FILE: {file_analysis.file_path}
-PURPOSE: {file_analysis.file_purpose}
-LANGUAGE: {file_analysis.language}
-LINES OF CODE: {file_analysis.lines_of_code}
-API ENDPOINTS: {len(file_analysis.api_endpoints)}
-FUNCTIONS: {len(file_analysis.functions)}
-DEPENDENCIES: {', '.join(file_analysis.dependencies[:10])}
-
-"""
-        
-        # Add detailed API information
-        if file_analysis.api_endpoints:
-            prompt += "DETAILED API ENDPOINTS:\n"
-            for api in file_analysis.api_endpoints:
-                prompt += f"\n{api.method} {api.path}\n"
-                prompt += f"Function: {api.function_name}\n"
-                prompt += f"Description: {api.description}\n"
-                if api.parameters:
-                    prompt += f"Parameters: {api.parameters}\n"
-                prompt += f"Code:\n```{file_analysis.language}\n{api.code_snippet}\n```\n"
-        
-        # Add detailed function information
-        if file_analysis.functions:
-            prompt += "\nDETAILED FUNCTIONS:\n"
-            for func in file_analysis.functions[:8]:  # Limit to 8 functions
-                prompt += f"\n{func.name}({', '.join(func.params)})\n"
-                prompt += f"Return Type: {func.return_type}\n"
-                prompt += f"Complexity: {func.complexity}\n"
-                prompt += f"Docstring: {func.docstring}\n"
-                prompt += f"Code:\n```{file_analysis.language}\n{func.code_snippet}\n```\n"
-        
-        prompt += """
-Create COMPREHENSIVE documentation with these sections:
-
-## FILE_OVERVIEW
-- Complete description of file purpose and role
-- Architecture context and relationships
-- Key responsibilities and functionality
-
-## API_DOCUMENTATION (if applicable)
-For each API endpoint provide:
-- Complete purpose and business logic
-- Detailed parameter documentation with types, validation, examples
-- Complete request/response examples with real data
-- Authentication and authorization requirements
-- Error handling with all possible error codes and responses
-- Rate limiting and usage guidelines
-- Integration examples with frontend code
-
-## FUNCTION_DOCUMENTATION
-For each function provide:
-- Complete purpose and algorithm description
-- Detailed parameter documentation with types and constraints
-- Return value documentation with examples
-- Usage examples and integration patterns
-- Error handling and edge cases
-- Performance considerations
-
-## SETUP_AND_DEPLOYMENT
-- Complete environment setup instructions
-- All required dependencies with versions
-- Environment variables with descriptions and examples
-- Database setup and configuration (if applicable)
-- Step-by-step deployment instructions
-- Docker configuration (if applicable)
-- Testing instructions
-
-## USAGE_EXAMPLES
-- Complete working examples for all major functionality
-- cURL commands for all API endpoints
-- JavaScript/Python client examples
-- Integration examples with popular frameworks
-- Real-world usage scenarios
-
-## TROUBLESHOOTING
-- Common issues and solutions
-- Error message explanations
-- Performance optimization tips
-- Debugging guidelines
-
-## SECURITY_CONSIDERATIONS
-- Authentication and authorization details
-- Input validation and sanitization
-- Security best practices
-- Vulnerability prevention
-
-Focus on creating PRODUCTION-READY documentation that allows developers to immediately understand, use, and deploy this code.
-"""
-        
-        return prompt
-    
-    async def _call_llm_comprehensive(self, session: aiohttp.ClientSession, prompt: str) -> str:
-        """Call LLM API with comprehensive prompt."""
-        
-        api_key = self.api_keys[self.current_key_index % len(self.api_keys)]
-        self.current_key_index += 1
-        
-        payload = {
-            "model": "llama-3.1-8b-instant",
-            "messages": [
-                {
-                    "role": "system",
-                    "content": "You are an expert technical documentation writer. Create comprehensive, production-ready documentation with complete examples and detailed explanations."
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            "max_tokens": 2000,  # Increased for comprehensive docs
-            "temperature": 0.1
-        }
-        
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
-        
-        try:
-            async with session.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                json=payload,
-                headers=headers,
-                timeout=aiohttp.ClientTimeout(total=45)
-            ) as response:
-                if response.status == 200:
-                    result = await response.json()
-                    return result['choices'][0]['message']['content']
-                else:
-                    error_text = await response.text()
-                    return f"API Error {response.status}: {error_text[:300]}"
-        
-        except Exception as e:
-            return f"Request failed: {str(e)}"
 
 class DocumentationFileGenerator:
     """Generate multiple documentation file formats."""
@@ -1962,15 +1762,20 @@ class EnhancedGitHubAnalyzer:
             
             print(f"🔍 Found {len(backend_files)} backend files with APIs")
             
-            # Step 4: Comprehensive LLM processing
+            # Step 4: Enhanced LLM processing with rate limiting
             llm_results = {}
-            if api_keys and analyzed_files:
-                self.progress.update_stage("Generating comprehensive documentation with LLM...")
-                llm_processor = EnhancedLLMProcessor(api_keys)
+            if api_keys and analyzed_files and EnhancedLLMProcessor:
+                self.progress.update_stage("Generating comprehensive documentation with enhanced LLM...")
                 
                 # Process all files (not just backend) for comprehensive docs
                 files_to_process = [f for f in analyzed_files if f.functions or f.api_endpoints]
-                llm_results = await llm_processor.process_files_comprehensive(files_to_process)
+                
+                async with EnhancedLLMProcessor(api_keys) as llm_processor:
+                    llm_results = await llm_processor.process_files_batch(files_to_process, batch_size=3)
+            elif api_keys and analyzed_files:
+                # Fallback to basic processing without rate limiting
+                self.progress.update_stage("Generating documentation (basic mode)...")
+                llm_results = {"info": "Using basic documentation generation without advanced rate limiting"}
             
             # Step 5: Compile comprehensive results
             self.progress.update_stage("Compiling comprehensive results...")

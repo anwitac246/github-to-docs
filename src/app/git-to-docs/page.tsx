@@ -11,6 +11,10 @@ const GitToDocsPage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeMethod, setActiveMethod] = useState<'zip' | 'github' | null>(null);
   const [submitError, setSubmitError] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+  const [results, setResults] = useState<any>(null);
+  const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,7 +91,7 @@ const GitToDocsPage = () => {
     }
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!zipFile && !githubUrl) {
       setSubmitError('Please upload a ZIP file or enter a GitHub repository URL');
       return;
@@ -96,8 +100,70 @@ const GitToDocsPage = () => {
       setSubmitError('Please enter a valid GitHub repository URL');
       return;
     }
-    // Frontend only - no backend call
-    console.log('Generate docs for:', zipFile ? zipFile.name : githubUrl);
+
+    setIsGenerating(true);
+    setSubmitError('');
+    setProgress(0);
+
+    try {
+      if (githubUrl) {
+        // Analyze GitHub repository
+        const response = await fetch('http://localhost:8000/api/analysis/github', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            github_url: githubUrl
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setAnalysisId(data.analysis_id);
+        
+        // Start polling for progress
+        pollAnalysisStatus(data.analysis_id);
+      } else if (zipFile) {
+        // Handle file upload (placeholder)
+        setSubmitError('File upload analysis coming soon!');
+        setIsGenerating(false);
+      }
+    } catch (error) {
+      console.error('Error starting analysis:', error);
+      setSubmitError('Failed to start analysis. Please try again.');
+      setIsGenerating(false);
+    }
+  };
+
+  const pollAnalysisStatus = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/analysis/status/${id}`);
+      const data = await response.json();
+      
+      setProgress(data.progress || 0);
+      
+      if (data.status === 'completed') {
+        // Get the results
+        const resultsResponse = await fetch(`http://localhost:8000/api/analysis/results/${id}`);
+        const resultsData = await resultsResponse.json();
+        setResults(resultsData);
+        setIsGenerating(false);
+      } else if (data.status === 'failed') {
+        setSubmitError(data.error || 'Analysis failed');
+        setIsGenerating(false);
+      } else {
+        // Continue polling
+        setTimeout(() => pollAnalysisStatus(id), 2000);
+      }
+    } catch (error) {
+      console.error('Error polling status:', error);
+      setSubmitError('Failed to get analysis status');
+      setIsGenerating(false);
+    }
   };
 
   const isButtonDisabled = !zipFile && (!githubUrl || !githubRegex.test(githubUrl));
@@ -278,17 +344,24 @@ const GitToDocsPage = () => {
               {/* Generate Button */}
               <button
                 onClick={handleGenerate}
-                disabled={isButtonDisabled}
+                disabled={isButtonDisabled || isGenerating}
                 className={`
                   w-full mt-8 py-4 px-8 rounded-xl text-lg font-semibold
                   transition-all duration-300 ease-out
-                  ${isButtonDisabled
+                  ${isButtonDisabled || isGenerating
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 hover:shadow-xl hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0'
                   }
                 `}
               >
-                Generate Docs
+                {isGenerating ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Analyzing... {progress}%
+                  </div>
+                ) : (
+                  'Generate Docs'
+                )}
               </button>
             </div>
           </div>
@@ -304,19 +377,78 @@ const GitToDocsPage = () => {
               </div>
               
               <div className="flex-1 rounded-2xl bg-gray-50 border border-gray-100 p-6 overflow-auto">
-                <div className="h-full flex flex-col items-center justify-center text-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-6">
-                    <FileText className="w-10 h-10 text-gray-300" />
+                {results ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                      <span className="text-sm font-medium text-green-600">Analysis Complete</span>
+                    </div>
+                    
+                    <div className="bg-white rounded-xl p-4 border border-gray-200">
+                      <h3 className="font-semibold text-gray-900 mb-2">Project Summary</h3>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <span className="text-gray-500">Files:</span>
+                          <span className="ml-2 font-medium">{results.summary?.total_files || 0}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">APIs:</span>
+                          <span className="ml-2 font-medium">{results.summary?.total_apis || 0}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Functions:</span>
+                          <span className="ml-2 font-medium">{results.summary?.total_functions || 0}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Languages:</span>
+                          <span className="ml-2 font-medium">{results.summary?.languages?.join(', ') || 'N/A'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {results.output_directory && (
+                      <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                        <h3 className="font-semibold text-blue-900 mb-2">Documentation Generated</h3>
+                        <p className="text-sm text-blue-700">
+                          Documentation files created in: <code className="bg-blue-100 px-2 py-1 rounded">{results.output_directory}</code>
+                        </p>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {['README.md', 'API_DOCUMENTATION.md', 'CODE_OF_CONDUCT.md'].map((file) => (
+                            <span key={file} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                              {file}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p className="text-gray-400 text-lg max-w-xs">
-                    Documentation will appear here after generation.
-                  </p>
-                  <div className="mt-8 flex flex-col gap-3 w-full max-w-xs">
-                    <div className="h-3 bg-gray-200 rounded-full w-full animate-pulse" />
-                    <div className="h-3 bg-gray-200 rounded-full w-4/5 animate-pulse" />
-                    <div className="h-3 bg-gray-200 rounded-full w-3/5 animate-pulse" />
+                ) : isGenerating ? (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-4" />
+                    <p className="text-gray-600 text-lg mb-2">Analyzing Repository...</p>
+                    <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 mb-2">
+                      <div 
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-500">{progress}% complete</p>
                   </div>
-                </div>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-center">
+                    <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-6">
+                      <FileText className="w-10 h-10 text-gray-300" />
+                    </div>
+                    <p className="text-gray-400 text-lg max-w-xs">
+                      Documentation will appear here after generation.
+                    </p>
+                    <div className="mt-8 flex flex-col gap-3 w-full max-w-xs">
+                      <div className="h-3 bg-gray-200 rounded-full w-full animate-pulse" />
+                      <div className="h-3 bg-gray-200 rounded-full w-4/5 animate-pulse" />
+                      <div className="h-3 bg-gray-200 rounded-full w-3/5 animate-pulse" />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
