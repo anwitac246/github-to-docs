@@ -4,6 +4,7 @@ import subprocess
 import asyncio
 from pathlib import Path
 from typing import List, Dict, Any
+from fastapi import FastAPI, HTTPException
 
 # Install required packages
 from config import REQUIRED_PACKAGES
@@ -27,7 +28,7 @@ from llm.processor import GuaranteedLLMProcessor
 from models.analysis_models import DetailedFileAnalysis
 from config import should_skip_directory, get_file_language
 
-print('✅ Setup complete!')
+print('Setup complete!')
 
 class GitHubDocsAnalyzer:
     """Main analyzer orchestrating the entire documentation generation process."""
@@ -48,14 +49,14 @@ class GitHubDocsAnalyzer:
             repo_path = self.repo_cloner.clone_repo(repo_url)
             
             # Step 2: Scan and analyze files
-            print("🔍 Scanning repository files...")
+            print("Scanning repository files...")
             files_data, file_contents = self._scan_repository(repo_path)
             
             if not files_data:
-                print("❌ No analyzable files found in repository")
+                print("No analyzable files found in repository")
                 return {"error": "No analyzable files found"}
             
-            print(f"📊 Found {len(files_data)} files to analyze")
+            print(f"Found {len(files_data)} files to analyze")
             
             # Step 3: Initialize LLM processor if API keys provided
             if api_keys:
@@ -65,25 +66,25 @@ class GitHubDocsAnalyzer:
                 
                 # Estimate processing time
                 processing_time = estimate_processing_time(len(files_data), len(api_keys))
-                print(f"⏱️ Estimated LLM processing time: {processing_time}")
+                print(f"⏱Estimated LLM processing time: {processing_time}")
                 
                 # Step 4: Process files with LLM
                 files_data = await self.llm_processor.process_files_with_llm_optimized(files_data, file_contents)
             else:
-                print("ℹ️ No API keys provided, skipping LLM analysis")
+                print("No API keys provided, skipping LLM analysis")
                 self.folder_analyzer = FolderAnalyzer()
                 self.hierarchical_analyzer = HierarchicalAnalyzer()
             
             # Step 5: Folder-level analysis
-            print("📁 Analyzing folders...")
+            print("Analyzing folders...")
             folder_summaries = self.folder_analyzer.analyze_folders(files_data)
             
             # Step 6: Build knowledge graph
-            print("🔗 Building knowledge graph...")
+            print("Building knowledge graph...")
             knowledge_graph = self.graph_builder.build_graph(files_data)
             
             # Step 7: Hierarchical analysis
-            print("🏗️ Performing hierarchical analysis...")
+            print("Performing hierarchical analysis...")
             hierarchical_results = await self.hierarchical_analyzer.perform_hierarchical_analysis(
                 files_data, folder_summaries
             )
@@ -103,12 +104,12 @@ class GitHubDocsAnalyzer:
                     "api_keys_used": len(api_keys) if api_keys else 0
                 }
             }
-            
-            print("✅ Analysis complete!")
+
+            print("Analysis complete!")
             return results
             
         except Exception as e:
-            print(f"❌ Analysis failed: {e}")
+            print(f"Analysis failed: {e}")
             return {"error": str(e)}
         
         finally:
@@ -142,7 +143,7 @@ class GitHubDocsAnalyzer:
                             file_contents[rel_path] = content
                             
                     except Exception as e:
-                        print(f"⚠️ Error analyzing {rel_path}: {e}")
+                        print(f"Error analyzing {rel_path}: {e}")
         
         return files_data, file_contents
 
@@ -156,9 +157,9 @@ async def main():
     api_keys = parse_api_keys(api_keys_input) if api_keys_input else []
     
     if api_keys:
-        print(f"🔑 Using {len(api_keys)} API keys for LLM analysis")
+        print(f"Using {len(api_keys)} API keys for LLM analysis")
     else:
-        print("ℹ️ No API keys provided - basic analysis only")
+        print("No API keys provided - basic analysis only")
     
     # Initialize and run analyzer
     analyzer = GitHubDocsAnalyzer()
@@ -171,14 +172,14 @@ async def main():
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(results, f, indent=2, default=str)
-        print(f"📄 Results saved to {output_file}")
+        print(f"Results saved to {output_file}")
     except Exception as e:
-        print(f"⚠️ Could not save results: {e}")
+        print(f"Could not save results: {e}")
     
     # Print summary
     if "error" not in results:
         stats = results["processing_stats"]
-        print(f"\n📊 Analysis Summary:")
+        print(f"\nAnalysis Summary:")
         print(f"   Files analyzed: {stats['total_files']}")
         print(f"   Folders analyzed: {stats['folders_analyzed']}")
         print(f"   LLM processed: {stats['llm_processed']}")
