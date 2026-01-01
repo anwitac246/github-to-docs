@@ -150,7 +150,7 @@ const Login: React.FC<LoginProps> = () => {
         }),
       });
 
-      router.push('/git-to-docs'); // Redirect after Google login
+      router.push('/git-to-docs');
 
     } catch (error: any) {
       setError(error.message);

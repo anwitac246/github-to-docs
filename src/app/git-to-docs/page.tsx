@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Upload, Github, FileArchive, AlertCircle, FileText, ArrowRight, Download, File, Folder, ChevronRight, ChevronDown, X, Loader2 } from 'lucide-react';
+import { Upload, Github, FileArchive, AlertCircle, FileText, ArrowRight, Download, File, Folder, ChevronRight, ChevronDown, X, Loader2, Sparkles } from 'lucide-react';
+import Navbar from '../components/Navbar';
 
 const GitToDocsPage = () => {
   const [zipFile, setZipFile] = useState<File | null>(null);
@@ -397,17 +398,13 @@ const GitToDocsPage = () => {
   const isButtonDisabled = !zipFile && (!githubUrl || !githubRegex.test(githubUrl));
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
+      <Navbar/>
       <div className="h-16" />
 
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50 via-white to-white" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23000000%22%20fill-opacity%3D%220.02%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-50" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20">
+      <div className="max-w-6xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
         <div 
-          className={`text-center mb-16 lg:mb-24 transition-all duration-1000 ${
+          className={`text-center mb-12 transition-all duration-1000 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
@@ -419,240 +416,208 @@ const GitToDocsPage = () => {
             Docs Generator
           </h1>
           
-          <p className="text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Upload your code or connect your GitHub repo to generate{' '}
-            <span className="text-[#0A0A0A] font-medium">rich semantic documentation</span>.
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Transform your repository into comprehensive documentation automatically
           </p>
         </div>
 
         {!results ? (
           <div 
-            className={`grid lg:grid-cols-5 gap-8 lg:gap-12 transition-all duration-1000 delay-300 ${
+            className={`max-w-3xl mx-auto transition-all duration-1000 delay-200 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-3xl border border-gray-200 p-8 lg:p-10 shadow-xl shadow-gray-100/50">
-                <h2 className="text-2xl font-semibold text-[#0A0A0A] mb-8">Upload Source</h2>
-                
-                <div 
-                  className={`relative mb-8 transition-all duration-300 ${
-                    activeMethod === 'zip' ? 'ring-2 ring-blue-500 ring-offset-4' : ''
-                  }`}
-                >
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    className={`
-                      relative cursor-pointer rounded-2xl border-2 border-dashed p-12 lg:p-16
-                      transition-all duration-300 ease-out
-                      ${isDragging 
-                        ? 'border-blue-500 bg-blue-50 shadow-[0_0_40px_rgba(37,99,235,0.15)]' 
-                        : 'border-gray-300 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/50'
-                      }
-                      ${zipFile ? 'border-blue-500 bg-blue-50' : ''}
-                    `}
-                  >
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept=".zip"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                    
-                    <div className="flex flex-col items-center text-center">
-                      <div className={`
-                        w-16 h-16 rounded-2xl flex items-center justify-center mb-6
-                        transition-all duration-300
-                        ${zipFile 
-                          ? 'bg-blue-500 text-white' 
-                          : 'bg-gray-100 text-gray-400 group-hover:bg-blue-100 group-hover:text-blue-500'
-                        }
-                      `}>
-                        {zipFile ? <FileArchive className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
-                      </div>
-                      
-                      {zipFile ? (
-                        <>
-                          <p className="text-lg font-medium text-[#0A0A0A] mb-1">{zipFile.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {(zipFile.size / 1024 / 1024).toFixed(2)} MB
-                          </p>
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setZipFile(null);
-                              setActiveMethod(null);
-                            }}
-                            className="mt-4 text-sm text-blue-600 hover:text-blue-700 font-medium"
-                          >
-                            Remove file
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          <p className="text-lg font-medium text-[#0A0A0A] mb-2">
-                            Drag & Drop ZIP folder here
-                          </p>
-                          <p className="text-gray-500">
-                            or <span className="text-blue-600 font-medium">click to upload</span>
-                          </p>
-                          <p className="text-sm text-gray-400 mt-3">Only .zip files accepted</p>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative my-8">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-white px-4 text-sm text-gray-500">or</span>
-                  </div>
-                </div>
-
-                <div className={`transition-all duration-300 ${
-                  activeMethod === 'github' ? 'ring-2 ring-blue-500 ring-offset-4 rounded-2xl' : ''
-                }`}>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
-                    GitHub Repository URL
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Github className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="url"
-                      value={githubUrl}
-                      onChange={handleGithubUrlChange}
-                      placeholder="https://github.com/username/repository"
-                      className={`
-                        w-full pl-12 pr-4 py-4 rounded-xl border-2 bg-gray-50/50
-                        text-[#0A0A0A] placeholder:text-gray-400
-                        transition-all duration-300
-                        focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10
-                        ${githubError 
-                          ? 'border-red-300 bg-red-50/50' 
-                          : 'border-gray-200 hover:border-gray-300'
-                        }
-                      `}
-                    />
-                  </div>
-                  {githubError && (
-                    <div className="flex items-center gap-2 mt-3 text-red-500 text-sm">
-                      <AlertCircle className="w-4 h-4" />
-                      <span>{githubError}</span>
-                    </div>
-                  )}
-                </div>
-
-                {submitError && (
-                  <div className="flex items-center gap-2 mt-6 p-4 bg-red-50 rounded-xl text-red-600 text-sm">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <span>{submitError}</span>
-                  </div>
-                )}
-
-                <button
-                  onClick={handleGenerate}
-                  disabled={isButtonDisabled || isGenerating}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-8 lg:p-10">
+              <div 
+                className={`relative mb-6 transition-all duration-300 ${
+                  activeMethod === 'zip' ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                }`}
+              >
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
                   className={`
-                    w-full mt-8 py-4 px-8 rounded-xl text-lg font-semibold
+                    relative cursor-pointer rounded-xl border-2 border-dashed p-12
                     transition-all duration-300 ease-out
-                    ${isButtonDisabled || isGenerating
-                      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-700 hover:to-blue-600 hover:shadow-xl hover:shadow-blue-500/25 hover:-translate-y-0.5 active:translate-y-0'
+                    ${isDragging 
+                      ? 'border-blue-500 bg-blue-50 shadow-lg' 
+                      : 'border-gray-300 bg-gray-50/50 hover:border-blue-400 hover:bg-blue-50/50'
                     }
+                    ${zipFile ? 'border-blue-500 bg-blue-50' : ''}
                   `}
                 >
-                  {isGenerating ? (
-                    <div className="flex items-center justify-center gap-3">
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Analyzing... {progress}%
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".zip"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  
+                  <div className="flex flex-col items-center text-center">
+                    <div className={`
+                      w-14 h-14 rounded-xl flex items-center justify-center mb-4
+                      transition-all duration-300
+                      ${zipFile 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-gray-200 text-gray-400'
+                      }
+                    `}>
+                      {zipFile ? <FileArchive className="w-7 h-7" /> : <Upload className="w-7 h-7" />}
                     </div>
-                  ) : (
-                    'Generate Docs'
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="lg:col-span-2">
-              <div className="bg-white rounded-3xl border border-gray-200 p-8 lg:p-10 shadow-xl shadow-gray-100/50 h-full min-h-[500px] flex flex-col">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-gray-500" />
+                    
+                    {zipFile ? (
+                      <>
+                        <p className="text-base font-medium text-gray-900 mb-1">{zipFile.name}</p>
+                        <p className="text-sm text-gray-500 mb-3">
+                          {(zipFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setZipFile(null);
+                            setActiveMethod(null);
+                          }}
+                          className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                        >
+                          Remove file
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <p className="text-base font-medium text-gray-900 mb-1">
+                          Drop your ZIP file here
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          or <span className="text-blue-600 font-medium">click to browse</span>
+                        </p>
+                      </>
+                    )}
                   </div>
-                  <h2 className="text-2xl font-semibold text-[#0A0A0A]">Documentation Preview</h2>
-                </div>
-                
-                <div className="flex-1 rounded-2xl bg-gray-50 border border-gray-100 p-6 overflow-auto">
-                  {isGenerating ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center">
-                      <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full animate-spin mb-4" />
-                      <p className="text-gray-600 text-lg mb-2">Analyzing Repository...</p>
-                      <div className="w-full max-w-xs bg-gray-200 rounded-full h-2 mb-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
-                      <p className="text-sm text-gray-500">{progress}% complete</p>
-                    </div>
-                  ) : (
-                    <div className="h-full flex flex-col items-center justify-center text-center">
-                      <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mb-6">
-                        <FileText className="w-10 h-10 text-gray-300" />
-                      </div>
-                      <p className="text-gray-400 text-lg max-w-xs">
-                        Documentation will appear here after generation.
-                      </p>
-                      <div className="mt-8 flex flex-col gap-3 w-full max-w-xs">
-                        <div className="h-3 bg-gray-200 rounded-full w-full animate-pulse" />
-                        <div className="h-3 bg-gray-200 rounded-full w-4/5 animate-pulse" />
-                        <div className="h-3 bg-gray-200 rounded-full w-3/5 animate-pulse" />
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-200" />
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-white px-4 text-sm text-gray-500 font-medium">OR</span>
+                </div>
+              </div>
+
+              <div className={`mb-6 transition-all duration-300 ${
+                activeMethod === 'github' ? 'ring-2 ring-blue-500 ring-offset-2 rounded-xl' : ''
+              }`}>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  GitHub Repository
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Github className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="url"
+                    value={githubUrl}
+                    onChange={handleGithubUrlChange}
+                    placeholder="https://github.com/username/repository"
+                    className={`
+                      w-full pl-11 pr-4 py-3 rounded-lg border-2 bg-gray-50
+                      text-gray-900 placeholder:text-gray-400
+                      transition-all duration-200
+                      focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100
+                      ${githubError 
+                        ? 'border-red-300 bg-red-50' 
+                        : 'border-gray-200 hover:border-gray-300'
+                      }
+                    `}
+                  />
+                </div>
+                {githubError && (
+                  <div className="flex items-center gap-2 mt-2 text-red-600 text-sm">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>{githubError}</span>
+                  </div>
+                )}
+              </div>
+
+              {submitError && (
+                <div className="flex items-center gap-2 mb-6 p-3 bg-red-50 rounded-lg text-red-600 text-sm border border-red-100">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{submitError}</span>
+                </div>
+              )}
+
+              {isGenerating && (
+                <div className="mb-6 p-6 bg-blue-50 rounded-xl border border-blue-100">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                    <p className="text-blue-900 font-medium">Analyzing repository...</p>
+                  </div>
+                  <div className="w-full bg-blue-200 rounded-full h-2">
+                    <div 
+                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <p className="text-sm text-blue-700 mt-2">{progress}% complete</p>
+                </div>
+              )}
+
+              <button
+                onClick={handleGenerate}
+                disabled={isButtonDisabled || isGenerating}
+                className={`
+                  w-full py-3.5 px-6 rounded-xl text-base font-semibold
+                  transition-all duration-200
+                  ${isButtonDisabled || isGenerating
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.98]'
+                  }
+                `}
+              >
+                {isGenerating ? 'Generating...' : 'Generate Documentation'}
+              </button>
             </div>
           </div>
         ) : (
-          <div className="grid lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-lg sticky top-24">
-                <div className="p-6 border-b border-gray-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Documentation</h3>
-                    <button
-                      onClick={handleDownloadDocs}
-                      className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
-                    >
-                      <Download className="w-4 h-4" />
-                      ZIP
-                    </button>
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-6 max-w-6xl mx-auto">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Generated Documentation</h2>
+                <p className="text-sm text-gray-600 mt-1">Browse and download your files</p>
+              </div>
+              <button
+                onClick={handleDownloadDocs}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium shadow-sm"
+              >
+                <Download className="w-4 h-4" />
+                Download ZIP
+              </button>
+            </div>
+            
+            <div className="grid lg:grid-cols-4 gap-6">
+              <div className="lg:col-span-1">
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm sticky top-6">
+                  <div className="p-4 border-b border-gray-200">
+                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <FileArchive className="w-4 h-4" />
+                      <span className="font-medium">{getDocumentationFiles().length} files</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <FileArchive className="w-4 h-4" />
-                    <span>{getDocumentationFiles().length} files</span>
+                  
+                  <div className="p-3 max-h-[calc(100vh-200px)] overflow-y-auto">
+                    {renderFileTree()}
                   </div>
-                </div>
-                
-                <div className="p-4 max-h-[calc(100vh-300px)] overflow-y-auto">
-                  {renderFileTree()}
                 </div>
               </div>
-            </div>
 
-            <div className="lg:col-span-3">
-              <div className="bg-white rounded-2xl border border-gray-200 shadow-lg h-[calc(100vh-200px)]">
-                {renderFileContent()}
+              <div className="lg:col-span-3">
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm min-h-[calc(100vh-200px)]">
+                  {renderFileContent()}
+                </div>
               </div>
             </div>
           </div>
