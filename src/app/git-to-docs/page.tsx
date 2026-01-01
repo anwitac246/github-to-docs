@@ -399,7 +399,7 @@ const GitToDocsPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
-      <Navbar/>
+      <Navbar />
       <div className="h-16" />
 
       <div className="max-w-6xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
@@ -508,9 +508,7 @@ const GitToDocsPage = () => {
                 </div>
               </div>
 
-              <div className={`mb-6 transition-all duration-300 ${
-                activeMethod === 'github' ? 'ring-2 ring-blue-500 ring-offset-2 rounded-xl' : ''
-              }`}>
+              <div className={`mb-6 transition-all duration-300 `}>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   GitHub Repository
                 </label>
