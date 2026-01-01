@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Zap, FileText, Code, Github, BookOpen, Upload, Download, Menu, X, ArrowRight, GitBranch, Clock } from 'lucide-react';
 import Navbar from './Navbar';
 import Image from 'next/image';
-
+import Link from 'next/link';
 export default function Git2Docs() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -78,10 +78,10 @@ export default function Git2Docs() {
                 Git2Docs automatically generates clean, comprehensive documentation from your codebase. Save hours of manual work and keep your docs always up-to-date.
               </p>
               <div className="flex gap-4">
+                <Link href='/git-to-docs'>
                 <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 text-xl shadow-lg">
-                  <Zap className="w-5 h-5" />
                   Start for Free
-                </button>
+                </button></Link>
                 <button className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all flex items-center gap-2 text-xl">
                   <Github className="w-5 h-5" />
                   View on GitHub

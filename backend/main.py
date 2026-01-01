@@ -61,9 +61,6 @@ def startup_checks():
     print("=" * 60)
 
 
-# ============================================================
-# -------------------- FastAPI App ----------------------------
-# ============================================================
 
 app = FastAPI(
     title="GitHub Documentation Generator API",
@@ -71,7 +68,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS (Next.js / frontend ready)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
