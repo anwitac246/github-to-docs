@@ -8,7 +8,7 @@ from typing import List, Dict, Any
 # Install required packages
 from config import REQUIRED_PACKAGES
 
-print('📦 Installing packages...')
+print('Installing packages...')
 for pkg in REQUIRED_PACKAGES:
     subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', pkg], capture_output=True)
 

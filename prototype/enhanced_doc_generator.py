@@ -16,7 +16,7 @@ REQUIRED_PACKAGES = ['requests', 'aiohttp', 'pydantic', 'gitpython', 'markdown']
 
 def install_packages():
     """Install packages in background."""
-    print('📦 Installing packages in background...')
+    print('Installing packages in background...')
     for pkg in REQUIRED_PACKAGES:
         subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', pkg], 
                       capture_output=True, check=False)
@@ -32,13 +32,6 @@ from urllib.parse import urlparse
 from dataclasses import dataclass
 from git import Repo
 import aiohttp
-
-# Import the enhanced LLM processor
-try:
-    from llm.enhanced_processor import EnhancedLLMProcessor
-except ImportError:
-    # Fallback if import fails
-    EnhancedLLMProcessor = None
 
 @dataclass
 class EnhancedAPIEndpoint:
@@ -109,7 +102,7 @@ class ProgressTracker:
                 elapsed = time.time() - self.start_time
                 if self.processed_files > 0:
                     eta = (elapsed / self.processed_files) * (self.total_files - self.processed_files)
-                    print(f"📊 Progress: {self.processed_files}/{self.total_files} ({progress:.1f}%) - ETA: {eta:.0f}s")
+                    print(f"Progress: {self.processed_files}/{self.total_files} ({progress:.1f}%) - ETA: {eta:.0f}s")
 
 class EnhancedCodeExtractor:
     """Enhanced code extraction with detailed analysis."""
@@ -438,6 +431,213 @@ class EnhancedCodeExtractor:
         
         return "General Purpose"
 
+class EnhancedLLMProcessor:
+    """Enhanced LLM processor for comprehensive documentation."""
+    """Enhanced LLM processor for comprehensive documentation."""
+    
+    def __init__(self, api_keys: List[str]):
+        self.api_keys = api_keys
+        self.current_key_index = 0
+    
+    async def process_files_comprehensive(self, files_data: List[EnhancedFileAnalysis]) -> Dict[str, Any]:
+        """Process files with comprehensive LLM analysis."""
+        
+        if not self.api_keys:
+            return {"error": "No API keys provided"}
+        
+        print(f"Processing {len(files_data)} files with comprehensive LLM analysis...")
+        
+        results = {}
+        
+        async with aiohttp.ClientSession() as session:
+            for file_analysis in files_data:
+                try:
+                    # Create comprehensive prompt
+                    prompt = self._create_comprehensive_prompt(file_analysis)
+                    
+                    # Call LLM
+                    response = await self._call_llm_comprehensive(session, prompt)
+                    
+                    results[file_analysis.file_path] = {
+                        "comprehensive_documentation": response,
+                        "file_analysis": {
+                            "purpose": file_analysis.file_purpose,
+                            "api_count": len(file_analysis.api_endpoints),
+                            "function_count": len(file_analysis.functions),
+                            "language": file_analysis.language,
+                            "lines_of_code": file_analysis.lines_of_code,
+                            "dependencies": file_analysis.dependencies,
+                            "is_backend": file_analysis.is_backend
+                        },
+                        "apis": [
+                            {
+                                "method": api.method,
+                                "path": api.path,
+                                "function": api.function_name,
+                                "description": api.description,
+                                "parameters": api.parameters
+                            } for api in file_analysis.api_endpoints
+                        ],
+                        "functions": [
+                            {
+                                "name": func.name,
+                                "params": func.params,
+                                "return_type": func.return_type,
+                                "complexity": func.complexity,
+                                "docstring": func.docstring,
+                                "is_api_handler": func.is_api_handler
+                            } for func in file_analysis.functions
+                        ]
+                    }
+                    
+                    print(f"Processed {file_analysis.file_path}")
+                    
+                except Exception as e:
+                    print(f"Error processing {file_analysis.file_path}: {e}")
+                    results[file_analysis.file_path] = {"error": str(e)}
+        
+        return results
+    
+    def _create_comprehensive_prompt(self, file_analysis: EnhancedFileAnalysis) -> str:
+        """Create comprehensive prompt for detailed documentation."""
+        
+        prompt = f"""Create COMPREHENSIVE documentation for this {file_analysis.language} file:
+
+FILE: {file_analysis.file_path}
+PURPOSE: {file_analysis.file_purpose}
+LANGUAGE: {file_analysis.language}
+LINES OF CODE: {file_analysis.lines_of_code}
+API ENDPOINTS: {len(file_analysis.api_endpoints)}
+FUNCTIONS: {len(file_analysis.functions)}
+DEPENDENCIES: {', '.join(file_analysis.dependencies[:10])}
+
+"""
+        
+        # Add detailed API information
+        if file_analysis.api_endpoints:
+            prompt += "DETAILED API ENDPOINTS:\n"
+            for api in file_analysis.api_endpoints:
+                prompt += f"\n{api.method} {api.path}\n"
+                prompt += f"Function: {api.function_name}\n"
+                prompt += f"Description: {api.description}\n"
+                if api.parameters:
+                    prompt += f"Parameters: {api.parameters}\n"
+                prompt += f"Code:\n```{file_analysis.language}\n{api.code_snippet}\n```\n"
+        
+        # Add detailed function information
+        if file_analysis.functions:
+            prompt += "\nDETAILED FUNCTIONS:\n"
+            for func in file_analysis.functions[:8]:  # Limit to 8 functions
+                prompt += f"\n{func.name}({', '.join(func.params)})\n"
+                prompt += f"Return Type: {func.return_type}\n"
+                prompt += f"Complexity: {func.complexity}\n"
+                prompt += f"Docstring: {func.docstring}\n"
+                prompt += f"Code:\n```{file_analysis.language}\n{func.code_snippet}\n```\n"
+        
+        prompt += """
+Create COMPREHENSIVE documentation with these sections:
+
+## FILE_OVERVIEW
+- Complete description of file purpose and role
+- Architecture context and relationships
+- Key responsibilities and functionality
+
+## API_DOCUMENTATION (if applicable)
+For each API endpoint provide:
+- Complete purpose and business logic
+- Detailed parameter documentation with types, validation, examples
+- Complete request/response examples with real data
+- Authentication and authorization requirements
+- Error handling with all possible error codes and responses
+- Rate limiting and usage guidelines
+- Integration examples with frontend code
+
+## FUNCTION_DOCUMENTATION
+For each function provide:
+- Complete purpose and algorithm description
+- Detailed parameter documentation with types and constraints
+- Return value documentation with examples
+- Usage examples and integration patterns
+- Error handling and edge cases
+- Performance considerations
+
+## SETUP_AND_DEPLOYMENT
+- Complete environment setup instructions
+- All required dependencies with versions
+- Environment variables with descriptions and examples
+- Database setup and configuration (if applicable)
+- Step-by-step deployment instructions
+- Docker configuration (if applicable)
+- Testing instructions
+
+## USAGE_EXAMPLES
+- Complete working examples for all major functionality
+- cURL commands for all API endpoints
+- JavaScript/Python client examples
+- Integration examples with popular frameworks
+- Real-world usage scenarios
+
+## TROUBLESHOOTING
+- Common issues and solutions
+- Error message explanations
+- Performance optimization tips
+- Debugging guidelines
+
+## SECURITY_CONSIDERATIONS
+- Authentication and authorization details
+- Input validation and sanitization
+- Security best practices
+- Vulnerability prevention
+
+Focus on creating PRODUCTION-READY documentation that allows developers to immediately understand, use, and deploy this code.
+"""
+        
+        return prompt
+    
+    async def _call_llm_comprehensive(self, session: aiohttp.ClientSession, prompt: str) -> str:
+        """Call LLM API with comprehensive prompt."""
+        
+        api_key = self.api_keys[self.current_key_index % len(self.api_keys)]
+        self.current_key_index += 1
+        
+        payload = {
+            "model": "llama-3.1-8b-instant",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are an expert technical documentation writer. Create comprehensive, production-ready documentation with complete examples and detailed explanations."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "max_tokens": 2000,  # Increased for comprehensive docs
+            "temperature": 0.1
+        }
+        
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        try:
+            async with session.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                json=payload,
+                headers=headers,
+                timeout=aiohttp.ClientTimeout(total=45)
+            ) as response:
+                if response.status == 200:
+                    result = await response.json()
+                    return result['choices'][0]['message']['content']
+                else:
+                    error_text = await response.text()
+                    return f"API Error {response.status}: {error_text[:300]}"
+        
+        except Exception as e:
+            return f"Request failed: {str(e)}"
+
 class DocumentationFileGenerator:
     """Generate multiple documentation file formats."""
     
@@ -471,17 +671,17 @@ class DocumentationFileGenerator:
             for _, old_dir in docs_dirs[3:]:
                 try:
                     shutil.rmtree(old_dir)
-                    print(f"🧹 Cleaned up old documentation: {old_dir}")
+                    print(f"Cleaned up old documentation: {old_dir}")
                 except Exception as e:
-                    print(f"⚠️ Could not remove old docs directory {old_dir}: {e}")
+                    print(f"Could not remove old docs directory {old_dir}: {e}")
                     
         except Exception as e:
-            print(f"⚠️ Error during cleanup: {e}")
+            print(f"Error during cleanup: {e}")
     
     def generate_all_documentation_files(self, analysis_results: Dict[str, Any], repo_info: Dict[str, Any]):
         """Generate comprehensive documentation files."""
         
-        print(f"📝 Generating comprehensive documentation files in {self.output_dir}/")
+        print(f"Generating comprehensive documentation files in {self.output_dir}/")
         
         # 1. Generate comprehensive README
         self._generate_comprehensive_readme(analysis_results, repo_info)
@@ -513,7 +713,7 @@ class DocumentationFileGenerator:
         # 10. Generate individual file docs
         self._generate_individual_file_docs(analysis_results)
         
-        print(f"✅ Generated comprehensive documentation in {self.output_dir}/")
+        print(f"Generated comprehensive documentation in {self.output_dir}/")
     
     def _generate_main_readme(self, analysis_results: Dict[str, Any], repo_info: Dict[str, Any]):
         """Generate main README.md file."""
@@ -522,7 +722,7 @@ class DocumentationFileGenerator:
 
 {repo_info.get('description', 'Comprehensive API and code documentation')}
 
-## 📊 Repository Overview
+## Repository Overview
 
 - **Total Files Analyzed**: {analysis_results.get('summary', {}).get('total_files', 0)}
 - **Backend Files**: {analysis_results.get('summary', {}).get('backend_files', 0)}
@@ -530,14 +730,14 @@ class DocumentationFileGenerator:
 - **Functions**: {analysis_results.get('summary', {}).get('total_functions', 0)}
 - **Languages**: {', '.join(analysis_results.get('summary', {}).get('languages', []))}
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Setup**: See [Setup Guide](./SETUP.md)
 2. **API Reference**: See [API Documentation](./API.md)
 3. **Deployment**: See [Deployment Guide](./DEPLOYMENT.md)
 4. **Troubleshooting**: See [Troubleshooting Guide](./TROUBLESHOOTING.md)
 
-## 📁 Documentation Structure
+## Documentation Structure
 
 - [`API.md`](./API.md) - Complete API documentation with examples
 - [`SETUP.md`](./SETUP.md) - Environment setup and installation
@@ -547,7 +747,7 @@ class DocumentationFileGenerator:
 - [`TROUBLESHOOTING.md`](./TROUBLESHOOTING.md) - Common issues and solutions
 - [`files/`](./files/) - Individual file documentation
 
-## 🔗 API Endpoints Summary
+## API Endpoints Summary
 
 """
         
@@ -565,7 +765,7 @@ class DocumentationFileGenerator:
 
 {', '.join(analysis_results.get('summary', {}).get('languages', []))}
 
-## 📈 Analysis Statistics
+## Analysis Statistics
 
 - Analysis completed in {analysis_results.get('analysis_time', 0):.1f} seconds
 - Documentation generated with LLM assistance
@@ -996,7 +1196,7 @@ Common issues and solutions.
         elif total_apis > 10:
             project_type = "API Platform"
         
-        readme_content = f"""# {repo_info.get('name', 'Project')} 🚀
+        readme_content = f"""# {repo_info.get('name', 'Project')} 
 
 <!-- GitHub Badges -->
 <div align="center">
@@ -1054,11 +1254,11 @@ Common issues and solutions.
 
 ---
 
-## 📊 Project Statistics
+## Project Statistics
 
 <div align="center">
 
-| 📈 Metric | 📊 Value |
+| Metric | Value |
 |-----------|----------|
 | **Total Files** | {analysis_results.get('summary', {}).get('total_files', 0)} |
 | **Backend Services** | {len(backend_files)} |
@@ -1069,13 +1269,13 @@ Common issues and solutions.
 
 </div>
 
-## 🌟 Overview
+## Overview
 
 {repo_info.get('description', f'A comprehensive {project_type.lower()} with advanced features and modern architecture.')}
 
 This is a full-stack {project_type.lower()} that combines modern technologies to provide a robust and scalable solution. The platform includes **{total_apis} API endpoints** across **{len(backend_files)} backend services**, implementing **{analysis_results.get('summary', {}).get('total_functions', 0)} functions** with comprehensive functionality.
 
-## 🚀 Key Features
+## Key Features
 
 """
         
@@ -1087,29 +1287,29 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
             apis = file_data.get('apis', [])
             
             if 'chat' in file_path or 'bot' in file_path:
-                features.append("🤖 **AI-Powered Conversations**: Advanced chatbot with natural language processing")
+                features.append("**AI-Powered Conversations**: Advanced chatbot with natural language processing")
             if 'ambulance' in file_path or 'emergency' in file_path:
-                features.append("🚑 **Emergency Services**: Real-time ambulance location and dispatch system")
+                features.append("**Emergency Services**: Real-time ambulance location and dispatch system")
             if 'location' in file_path or 'doctor' in file_path:
-                features.append("🏥 **Healthcare Provider Network**: Find and connect with medical professionals")
+                features.append("***Healthcare Provider Network**: Find and connect with medical professionals")
             if 'document' in file_path:
-                features.append("📄 **Document Processing**: AI-powered document analysis and extraction")
+                features.append("**Document Processing**: AI-powered document analysis and extraction")
             if 'yoga' in file_path or 'exercise' in file_path:
-                features.append("🧘 **Wellness Tracking**: Exercise monitoring and pose detection")
+                features.append("**Wellness Tracking**: Exercise monitoring and pose detection")
             if 'video' in file_path or 'room' in file_path:
-                features.append("📹 **Video Consultations**: Real-time video calls and telemedicine")
+                features.append("**Video Consultations**: Real-time video calls and telemedicine")
             if 'appointment' in file_path:
-                features.append("📅 **Appointment Management**: Comprehensive scheduling system")
+                features.append("**Appointment Management**: Comprehensive scheduling system")
             if 'auth' in file_path or 'login' in file_path:
-                features.append("🔐 **Secure Authentication**: Multi-factor authentication and user management")
+                features.append("**Secure Authentication**: Multi-factor authentication and user management")
         
         # Add generic features if none detected
         if not features:
             features = [
-                f"🔧 **{len(backend_files)} Backend Services**: Microservices architecture with specialized functionality",
-                f"🌐 **{total_apis} API Endpoints**: Comprehensive REST API with full documentation",
-                f"⚡ **High Performance**: Optimized code with {analysis_results.get('summary', {}).get('total_functions', 0)} functions",
-                "🔒 **Security First**: Built-in security measures and best practices"
+                f"**{len(backend_files)} Backend Services**: Microservices architecture with specialized functionality",
+                f"**{total_apis} API Endpoints**: Comprehensive REST API with full documentation",
+                f"**High Performance**: Optimized code with {analysis_results.get('summary', {}).get('total_functions', 0)} functions",
+                "**Security First**: Built-in security measures and best practices"
             ]
         
         for feature in features[:8]:  # Limit to 8 features
@@ -1159,14 +1359,14 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
         
         readme_content += f"""
 
-## 📁 Project Structure
+## Project Structure
 
 <details>
-<summary>🔍 <strong>Click to expand project structure</strong></summary>
+<summary><strong>Click to expand project structure</strong></summary>
 
 ```
 {repo_info.get('name', 'project')}/
-├── 🐍 Backend Services ({len([f for f in backend_files if f.get('language') == 'python'])})
+├── Backend Services ({len([f for f in backend_files if f.get('language') == 'python'])})
 """
         
         # Add backend files structure with better formatting
@@ -1174,43 +1374,43 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
             if file_data.get('language') == 'python':
                 api_count = file_data.get('api_count', 0)
                 func_count = file_data.get('function_count', 0)
-                purpose_emoji = "🔧"
+                purpose_emoji = ""
                 if 'auth' in file_data['file_path'].lower():
-                    purpose_emoji = "🔐"
+                    purpose_emoji = ""
                 elif 'api' in file_data['file_path'].lower():
-                    purpose_emoji = "🌐"
+                    purpose_emoji = ""
                 elif 'service' in file_data['file_path'].lower():
-                    purpose_emoji = "⚙️"
+                    purpose_emoji = ""
                 
                 readme_content += f"│   ├── {purpose_emoji} {file_data['file_path']:<25} # {file_data.get('file_purpose', 'Service')} ({api_count} APIs, {func_count} funcs)\n"
         
         # Add frontend structure if JavaScript files exist
         frontend_files = [f for f in analysis_results.get('all_files', []) if not f.get('is_backend', False)]
         if frontend_files:
-            readme_content += f"├── 🌐 Frontend Application ({len(frontend_files)} files)\n"
+            readme_content += f"├── Frontend Application ({len(frontend_files)} files)\n"
             
             # Group frontend files by type
             pages = [f for f in frontend_files if 'page' in f.get('file_path', '').lower()]
             components = [f for f in frontend_files if 'component' in f.get('file_path', '').lower()]
             
             if pages:
-                readme_content += f"│   ├── 📄 Pages ({len(pages)} files)\n"
+                readme_content += f"│   ├── Pages ({len(pages)} files)\n"
                 for file_data in pages[:3]:  # Show first 3
                     readme_content += f"│   │   ├── {file_data['file_path']}\n"
                 if len(pages) > 3:
                     readme_content += f"│   │   └── ... and {len(pages) - 3} more\n"
             
             if components:
-                readme_content += f"│   ├── 🧩 Components ({len(components)} files)\n"
+                readme_content += f"│   ├── Components ({len(components)} files)\n"
                 for file_data in components[:3]:  # Show first 3
                     readme_content += f"│   │   ├── {file_data['file_path']}\n"
                 if len(components) > 3:
                     readme_content += f"│   │   └── ... and {len(components) - 3} more\n"
         
-        readme_content += f"""└── 📄 Configuration Files
-    ├── 🔧 Environment configs
-    ├── 📦 Package managers
-    └── 🚀 Deployment scripts
+        readme_content += f"""└── Configuration Files
+    ├── Environment configs
+    ├── Package managers
+    └── Deployment scripts
 ```
 
 </details>
@@ -1235,13 +1435,13 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
         
         # Add major technologies to the table
         major_techs = {
-            'flask': ('🌐 Web Framework', 'REST API development'),
-            'fastapi': ('⚡ API Framework', 'High-performance APIs'),
-            'firebase': ('🔥 Backend Service', 'Authentication & Database'),
-            'tensorflow': ('🤖 ML Framework', 'Machine Learning'),
-            'opencv': ('👁️ Computer Vision', 'Image Processing'),
-            'react': ('⚛️ UI Library', 'Frontend Components'),
-            'next': ('🚀 React Framework', 'Full-stack Development')
+            'flask': ('Web Framework', 'REST API development'),
+            'fastapi': ('API Framework', 'High-performance APIs'),
+            'firebase': ('Backend Service', 'Authentication & Database'),
+            'tensorflow': ('ML Framework', 'Machine Learning'),
+            'opencv': ('Computer Vision', 'Image Processing'),
+            'react': ('UI Library', 'Frontend Components'),
+            'next': ('React Framework', 'Full-stack Development')
         }
         
         for tech, (category, purpose) in major_techs.items():
@@ -1256,20 +1456,20 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
 """
         
         if 'javascript' in languages or 'typescript' in languages:
-            readme_content += """| **React** | ⚛️ UI Framework | Component-based user interface |
-| **Next.js** | 🚀 Full-stack | Server-side rendering & routing |
-| **TypeScript** | 📝 Type Safety | Enhanced JavaScript with types |
-| **Tailwind CSS** | 🎨 Styling | Utility-first CSS framework |
+            readme_content += """| **React** | UI Framework | Component-based user interface |
+| **Next.js** | Full-stack | Server-side rendering & routing |
+| **TypeScript** | Type Safety | Enhanced JavaScript with types |
+| **Tailwind CSS** | Styling | Utility-first CSS framework |
 """
         
         readme_content += f"""
 </div>
 
-## 🚀 Quick Start
+## Quick Start
 
 <div align="center">
 
-### 🔧 Prerequisites
+### Prerequisites
 
 </div>
 
@@ -1293,12 +1493,12 @@ This is a full-stack {project_type.lower()} that combines modern technologies to
 
 <div align="center">
 
-#### 🚀 Get Started in 3 Steps
+#### Get Started in 3 Steps
 
 </div>
 
 <details>
-<summary>📋 <strong>Step 1: Clone the Repository</strong></summary>
+<summary><strong>Step 1: Clone the Repository</strong></summary>
 
 ```bash
 # Clone the repository
@@ -1311,7 +1511,7 @@ cd {repo_info.get('name', 'repo')}
 </details>
 
 <details>
-<summary>🔧 <strong>Step 2: Backend Setup</strong></summary>
+<summary><strong>Step 2: Backend Setup</strong></summary>
 
 ```bash
 # Create virtual environment (recommended)
@@ -1333,7 +1533,7 @@ pip install -r requirements.txt
         
         if 'javascript' in languages:
             readme_content += """<details>
-<summary>🌐 <strong>Step 3: Frontend Setup</strong></summary>
+<summary><strong>Step 3: Frontend Setup</strong></summary>
 
 ```bash
 # Install Node.js dependencies
@@ -1416,7 +1616,7 @@ npm start
         
         readme_content += f"""
 
-## 📖 API Documentation
+## API Documentation
 
 ### API Overview
 This project provides {total_apis} API endpoints across {len(backend_files)} services:
@@ -1438,7 +1638,7 @@ This project provides {total_apis} API endpoints across {len(backend_files)} ser
         readme_content += """
 For complete API documentation with examples, see [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
 
-## 🔧 Configuration
+## Configuration
 
 ### Service Configuration
 Each service can be configured through environment variables and configuration files.
@@ -1449,7 +1649,7 @@ Each service can be configured through environment variables and configuration f
 - Set up proper CORS policies
 - Use HTTPS in production
 
-## 🧪 Testing
+## Testing
 
 ### API Testing
 ```bash
@@ -1460,7 +1660,7 @@ curl -X GET http://localhost:5000/health
 pytest tests/
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Deployment
 ```bash
@@ -1471,7 +1671,7 @@ docker run -p 5000:5000 project-backend
 
 For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -1481,18 +1681,18 @@ For detailed deployment instructions, see [DEPLOYMENT.md](./DEPLOYMENT.md)
 
 Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for details on our code of conduct.
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🆘 Support
+## Support
 
 For support and questions:
-- 📧 Email: support@project.com
-- 🐛 Issues: [GitHub Issues]({repo_info.get('url', '')}/issues)
-- 📖 Documentation: [Project Wiki]({repo_info.get('url', '')}/wiki)
+- Email: support@project.com
+- Issues: [GitHub Issues]({repo_info.get('url', '')}/issues)
+- Documentation: [Project Wiki]({repo_info.get('url', '')}/wiki)
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 """
         
@@ -1520,7 +1720,7 @@ For support and questions:
 
 <div align="center">
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
@@ -1528,33 +1728,33 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 [![Pull Requests](https://img.shields.io/github/issues-pr/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')})](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/pulls)
 [![Code Quality](https://img.shields.io/codacy/grade/a/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')})](https://app.codacy.com/gh/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')})
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 [![License](https://img.shields.io/github/license/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}?style=for-the-badge)](LICENSE)
 
-## 🆘 Support & Community
+## Support & Community
 
 <div align="center">
 
 | Platform | Link | Purpose |
 |----------|------|---------|
-| 🐛 **Issues** | [GitHub Issues](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/issues) | Bug reports & feature requests |
-| 💬 **Discussions** | [GitHub Discussions](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/discussions) | Community chat & Q&A |
-| 📖 **Wiki** | [Project Wiki](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/wiki) | Documentation & guides |
-| 📧 **Email** | support@{repo_info.get('name', 'project').lower()}.com | Direct support |
+| **Issues** | [GitHub Issues](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/issues) | Bug reports & feature requests |
+| **Discussions** | [GitHub Discussions](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/discussions) | Community chat & Q&A |
+| **Wiki** | [Project Wiki](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/wiki) | Documentation & guides |
+| **Email** | support@{repo_info.get('name', 'project').lower()}.com | Direct support |
 
 </div>
 
-## ⭐ Show Your Support
+## Show Your Support
 
-If this project helped you, please consider giving it a ⭐ on GitHub!
+If this project helped you, please consider giving it a ⭐on GitHub!
 
 [![GitHub stars](https://img.shields.io/github/stars/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}?style=social)](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}?style=social)](https://github.com/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')}/network/members)
 
-## 📊 Project Stats
+## Project Stats
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')})
 ![GitHub last commit](https://img.shields.io/github/last-commit/{repo_info.get('owner', 'user')}/{repo_info.get('name', 'repo')})
@@ -1564,14 +1764,14 @@ If this project helped you, please consider giving it a ⭐ on GitHub!
 
 <div align="center">
 
-**🚀 Project Status**: ✅ Active Development  
-**📅 Last Updated**: {time.strftime('%Y-%m-%d')}  
-**🏷️ Version**: 1.0.0  
-**⏱️ Analysis Time**: {analysis_results.get('analysis_time', 0):.1f}s  
-**📁 Total Files**: {analysis_results.get('summary', {}).get('total_files', 0)}  
-**🔗 API Endpoints**: {analysis_results.get('summary', {}).get('total_apis', 0)}
+**Project Status**: Active Development  
+**Last Updated**: {time.strftime('%Y-%m-%d')}  
+**Version**: 1.0.0  
+**Analysis Time**: {analysis_results.get('analysis_time', 0):.1f}s  
+**Total Files**: {analysis_results.get('summary', {}).get('total_files', 0)}  
+**API Endpoints**: {analysis_results.get('summary', {}).get('total_apis', 0)}
 
-**Made with ❤️ by the development team**
+**Made with love by the development team**
 
 *This documentation was automatically generated by the Enhanced GitHub Documentation Analyzer*
 
@@ -1676,13 +1876,13 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
         total_apis = summary_data.get('total_apis', 0)
         total_functions = summary_data.get('total_functions', 0)
         
-        summary_content = f"""# {project_name} - Project Summary 📊
+        summary_content = f"""# {project_name} - Project Summary
 
 ## Project Overview
 
 The {project_name} is a comprehensive software platform with {total_files} files, {total_apis} APIs, and {total_functions} functions.
 
-## 📈 Project Statistics
+## Project Statistics
 
 - **Total Files**: {total_files}
 - **Total APIs**: {total_apis}
@@ -1695,7 +1895,7 @@ The project follows modern software architecture principles with clear separatio
 
 ---
 
-**Project Status**: ✅ Complete and Production-Ready  
+**Project Status**: Complete and Production-Ready  
 **Last Updated**: {time.strftime('%Y-%m-%d')}
 """
         
@@ -1728,7 +1928,7 @@ class EnhancedGitHubAnalyzer:
                 return {"error": "No code files found"}
             
             self.progress.set_total_files(len(all_files))
-            print(f"📁 Found {len(all_files)} code files")
+            print(f"Found {len(all_files)} code files")
             
             # Step 3: Enhanced extraction
             self.progress.update_stage("Performing enhanced code analysis...")
@@ -1758,24 +1958,19 @@ class EnhancedGitHubAnalyzer:
                         self.progress.increment_processed()
                         
                     except Exception as e:
-                        print(f"❌ Error analyzing file: {e}")
+                        print(f"Error analyzing file: {e}")
             
-            print(f"🔍 Found {len(backend_files)} backend files with APIs")
+            print(f"Found {len(backend_files)} backend files with APIs")
             
-            # Step 4: Enhanced LLM processing with rate limiting
+            # Step 4: Comprehensive LLM processing
             llm_results = {}
-            if api_keys and analyzed_files and EnhancedLLMProcessor:
-                self.progress.update_stage("Generating comprehensive documentation with enhanced LLM...")
+            if api_keys and analyzed_files:
+                self.progress.update_stage("Generating comprehensive documentation with LLM...")
+                llm_processor = EnhancedLLMProcessor(api_keys)
                 
                 # Process all files (not just backend) for comprehensive docs
                 files_to_process = [f for f in analyzed_files if f.functions or f.api_endpoints]
-                
-                async with EnhancedLLMProcessor(api_keys) as llm_processor:
-                    llm_results = await llm_processor.process_files_batch(files_to_process, batch_size=3)
-            elif api_keys and analyzed_files:
-                # Fallback to basic processing without rate limiting
-                self.progress.update_stage("Generating documentation (basic mode)...")
-                llm_results = {"info": "Using basic documentation generation without advanced rate limiting"}
+                llm_results = await llm_processor.process_files_comprehensive(files_to_process)
             
             # Step 5: Compile comprehensive results
             self.progress.update_stage("Compiling comprehensive results...")
@@ -1859,17 +2054,17 @@ class EnhancedGitHubAnalyzer:
                 results["output_directory"] = unique_output_dir
             
             elapsed = time.time() - start_time
-            print(f"✅ Comprehensive analysis complete in {elapsed:.1f}s!")
-            print(f"📊 Summary: {len(analyzed_files)} files, {len(backend_files)} backend, {total_apis} APIs, {total_functions} functions")
+            print(f"Comprehensive analysis complete in {elapsed:.1f}s!")
+            print(f"Summary: {len(analyzed_files)} files, {len(backend_files)} backend, {total_apis} APIs, {total_functions} functions")
             
             if api_keys:
                 output_dir = results.get("output_directory", "docs_output")
-                print(f"📚 Comprehensive documentation generated in {output_dir}/")
+                print(f"Comprehensive documentation generated in {output_dir}/")
             
             return results
             
         except Exception as e:
-            print(f"❌ Analysis failed: {e}")
+            print(f"Analysis failed: {e}")
             return {"error": str(e)}
         
         finally:
