@@ -1789,7 +1789,7 @@ If this project helped you, please consider giving it a ⭐on GitHub!
         backend_files = analysis_results.get('backend_files', [])
         total_apis = analysis_results.get('summary', {}).get('total_apis', 0)
         
-        api_content = f"""# {repo_info.get('name', 'Project')} - API Documentation 📚
+        api_content = f"""# {repo_info.get('name', 'Project')} - API Documentation 
 
 Complete API reference with examples and usage instructions.
 
@@ -2213,13 +2213,13 @@ async def main():
             doc_count = len(results.get("api_documentation", {}))
             output_dir = results.get("output_directory", "docs_output")
             print(f"   Comprehensive docs generated: {doc_count}")
-            print(f"   📚 Documentation files created in: {output_dir}/")
-            print(f"   📖 Main README: {output_dir}/README.md")
-            print(f"   📋 API Documentation: {output_dir}/API_DOCUMENTATION.md")
-            print(f"   📜 Code of Conduct: {output_dir}/CODE_OF_CONDUCT.md")
-            print(f"   📊 Project Summary: {output_dir}/PROJECT_SUMMARY.md")
-            print(f"   🔧 Setup Guide: {output_dir}/SETUP.md")
-            print(f"   🏗️ Architecture: {output_dir}/ARCHITECTURE.md")
+            print(f"   Documentation files created in: {output_dir}/")
+            print(f"   Main README: {output_dir}/README.md")
+            print(f"   API Documentation: {output_dir}/API_DOCUMENTATION.md")
+            print(f"   Code of Conduct: {output_dir}/CODE_OF_CONDUCT.md")
+            print(f"   Project Summary: {output_dir}/PROJECT_SUMMARY.md")
+            print(f"   Setup Guide: {output_dir}/SETUP.md")
+            print(f"   Architecture: {output_dir}/ARCHITECTURE.md")
 
 if __name__ == "__main__":
     asyncio.run(main())
