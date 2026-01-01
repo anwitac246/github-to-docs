@@ -2,7 +2,7 @@
 
 A comprehensive tool that transforms GitHub repositories into professional documentation using AI-powered analysis.
 
-## 🚀 Features
+## Features
 
 - **AI-Powered Analysis**: Advanced code analysis using Groq LLM
 - **Comprehensive Documentation**: Generates README, API docs, setup guides, and more
@@ -11,7 +11,7 @@ A comprehensive tool that transforms GitHub repositories into professional docum
 - **Beautiful UI**: Modern, responsive interface built with Next.js
 - **Multiple Input Methods**: GitHub URL or ZIP file upload
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 github-to-docs/
@@ -40,7 +40,7 @@ github-to-docs/
 └── .env                     # Environment variables
 ```
 
-## 🛠️ Setup Instructions
+## Setup Instructions
 
 ### Backend Setup
 
@@ -81,7 +81,7 @@ github-to-docs/
    
    The frontend will be available at `http://localhost:3000`
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -95,7 +95,7 @@ The backend automatically:
 - Loads configuration from `.env` file
 - Initializes rate limiting with multiple API keys
 
-## 📖 API Documentation
+## API Documentation
 
 ### Endpoints
 
@@ -120,7 +120,7 @@ curl http://localhost:8000/api/analysis/status/{analysis_id}
 curl http://localhost:8000/api/analysis/results/{analysis_id}
 ```
 
-## 🎯 How It Works
+## How It Works
 
 1. **Repository Cloning**: Clones the GitHub repository to a temporary directory
 2. **File Analysis**: Scans and analyzes code files for:
@@ -136,7 +136,7 @@ curl http://localhost:8000/api/analysis/results/{analysis_id}
    - SETUP_GUIDE.md with installation instructions
    - LLM_INSIGHTS.md with AI-generated insights
 
-## 🔄 Rate Limiting Strategy
+## Rate Limiting Strategy
 
 The system implements intelligent rate limiting to handle Groq API limits:
 
@@ -146,7 +146,7 @@ The system implements intelligent rate limiting to handle Groq API limits:
 - **Error Handling**: Graceful degradation when limits are reached
 - **Progress Tracking**: Real-time updates during processing
 
-## 🎨 Frontend Features
+## Frontend Features
 
 - **Real-time Progress**: Live updates during analysis
 - **Beautiful Results Display**: Comprehensive visualization of results
@@ -154,7 +154,7 @@ The system implements intelligent rate limiting to handle Groq API limits:
 - **Download Support**: Easy access to generated documentation
 - **Error Handling**: User-friendly error messages and recovery
 
-## 🚀 Production Deployment
+## Production Deployment
 
 ### Backend Deployment
 
@@ -168,17 +168,17 @@ The system implements intelligent rate limiting to handle Groq API limits:
 2. Deploy to your preferred platform (Vercel, Netlify, etc.)
 3. Update API endpoints to point to your production backend
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
 4. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
 ---
 
-*Built with ❤️ using FastAPI, Next.js, and Groq AI*
+*Built with using FastAPI, Next.js, and Groq AI*
