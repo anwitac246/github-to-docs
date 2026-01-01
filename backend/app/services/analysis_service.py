@@ -7,14 +7,17 @@ import uuid
 import json
 from typing import Dict, Any, List, Optional
 from datetime import datetime
+from pathlib import Path
 
 from ..config import Config
 from ..models import AnalysisStatus, AnalysisResults, ProjectSummary, FileAnalysis
-
-# Import the enhanced documentation generator components
+from dotenv import load_dotenv
 import sys
-sys.path.append(os.path.join(os.path.dirname(__file__), '../../../prototype'))
+load_dotenv()
 
+prototype_path = Path(__file__).parent.parent.parent.parent / "prototype"
+if str(prototype_path) not in sys.path:
+    sys.path.insert(0, str(prototype_path))
 from enhanced_doc_generator import EnhancedGitHubAnalyzer
 
 class AnalysisService:

@@ -13,6 +13,15 @@
 # testing
 /coverage
 
+# Ignore generated documentation folders
+docs_github-to-docs_*/
+
+# Ignore results folder
+results/
+
+# Ignore temp folder
+temp/
+
 # next.js
 /.next/
 /out/

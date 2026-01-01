@@ -1,8 +1,3 @@
-"""
-Main FastAPI application + startup logic
-for the GitHub Documentation Generator backend.
-"""
-
 import os
 import sys
 import subprocess
@@ -16,48 +11,47 @@ from fastapi.responses import JSONResponse
 
 from app.config import Config
 from app.routes.analysis import router as analysis_router
-
-# ============================================================
-# -------------------- Startup Utilities ---------------------
-# ============================================================
+from dotenv import load_dotenv
+load_dotenv()
+sys.path.append(os.path.abspath("../prototype"))
 
 def check_python_version():
     if sys.version_info < (3, 8):
-        print("❌ Python 3.8 or higher is required")
+        print("Python 3.8 or higher is required")
         sys.exit(1)
-    print(f"✅ Python {sys.version_info.major}.{sys.version_info.minor} detected")
+    print(f"Python {sys.version_info.major}.{sys.version_info.minor} detected")
 
 
 def check_env_file():
     env_file = Path("../.env")
     if not env_file.exists():
-        print("⚠️ .env file not found in parent directory")
+        print(".env file not found in parent directory")
         return False
 
     content = env_file.read_text()
     if "GROQ_API_KEYS" not in content:
-        print("⚠️ GROQ_API_KEYS not found in .env file")
+        print("GROQ_API_KEYS not found in .env file")
         return False
 
-    print("✅ Environment configuration found")
+    print("Environment configuration found")
     return True
 
 
 def create_directories():
     for directory in ["results", "temp"]:
         Path(directory).mkdir(exist_ok=True)
-        print(f"📁 Ensured directory exists: {directory}")
+        print(f"Ensured directory exists: {directory}")
 
 
 def startup_checks():
-    print("🚀 GitHub Documentation Generator - Backend Startup")
+    print("GitHub Documentation Generator - Backend Startup")
     print("=" * 60)
 
     check_python_version()
     check_env_file()
     create_directories()
 
-    print("✅ Startup checks complete")
+    print("Startup checks complete")
     print("=" * 60)
 
 
@@ -76,7 +70,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        "http://127.0.0.1:56769"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -93,11 +87,6 @@ if os.path.exists(Config.RESULTS_DIR):
         StaticFiles(directory=Config.RESULTS_DIR),
         name="results"
     )
-
-
-# ============================================================
-# -------------------- API Endpoints --------------------------
-# ============================================================
 
 @app.get("/")
 async def root():
@@ -138,10 +127,6 @@ async def global_exception_handler(request, exc):
     )
 
 
-# ============================================================
-# -------------------- Entrypoint -----------------------------
-# ============================================================
-
 if __name__ == "__main__":
     # Move to backend directory
     os.chdir(Path(__file__).parent)
@@ -152,11 +137,11 @@ if __name__ == "__main__":
     # Load configuration
     Config.load_config()
 
-    print("🚀 Starting GitHub Documentation Generator API")
-    print(f"📁 Results directory: {Config.RESULTS_DIR}")
-    print(f"🔑 Groq API keys configured: {len(Config.GROQ_API_KEYS)}")
-    print("📍 Server: http://localhost:8000")
-    print("📖 Docs:   http://localhost:8000/docs")
+    print("Starting GitHub Documentation Generator API")
+    print(f"Results directory: {Config.RESULTS_DIR}")
+    print(f"Groq API keys configured: {len(Config.GROQ_API_KEYS)}")
+    print("Server: http://localhost:8000")
+    print("Docs:   http://localhost:8000/docs")
     print("=" * 60)
 
     uvicorn.run(

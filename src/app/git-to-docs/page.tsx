@@ -114,7 +114,8 @@ const GitToDocsPage = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            github_url: githubUrl
+            github_url: githubUrl,
+            groq_api_keys: [] 
           })
         });
 

@@ -1,5 +1,3 @@
-"""API routes for documentation analysis."""
-
 from fastapi import APIRouter, HTTPException, BackgroundTasks, UploadFile, File
 from typing import List, Optional
 import os
@@ -10,7 +8,8 @@ import shutil
 from ..models import GitHubRequest, AnalysisResponse, AnalysisStatus
 from ..services.analysis_service import analysis_service
 from ..config import Config
-
+from dotenv import load_dotenv
+load_dotenv()
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 
 @router.post("/github", response_model=AnalysisResponse)
@@ -18,9 +17,17 @@ async def analyze_github_repository(request: GitHubRequest):
     """Start analysis of a GitHub repository."""
     
     try:
+        # Use API keys from request, or fall back to environment variable
+        api_keys = request.groq_api_keys
+        if not api_keys:
+            # Get from environment variable
+            env_keys = os.getenv('GROQ_API_KEYS', '')
+            if env_keys:
+                api_keys = [key.strip() for key in env_keys.split(',') if key.strip()]
+        
         analysis_id = await analysis_service.start_github_analysis(
             str(request.github_url),
-            request.groq_api_keys
+            api_keys
         )
         
         return AnalysisResponse(
@@ -33,6 +40,7 @@ async def analyze_github_repository(request: GitHubRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to start analysis: {str(e)}")
+
 
 @router.post("/upload", response_model=AnalysisResponse)
 async def analyze_uploaded_file(

@@ -1,5 +1,3 @@
-"""Main orchestration script for GitHub documentation analyzer."""
-
 import os
 import sys
 import subprocess
@@ -18,23 +16,15 @@ for pkg in REQUIRED_PACKAGES:
 import sys
 import os
 
-# Add current directory and subdirectories to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-sys.path.insert(0, os.path.join(current_dir, 'utils'))
-sys.path.insert(0, os.path.join(current_dir, 'parsers'))
-sys.path.insert(0, os.path.join(current_dir, 'analyzers'))
-sys.path.insert(0, os.path.join(current_dir, 'llm'))
-sys.path.insert(0, os.path.join(current_dir, 'models'))
 
-from git_utils import GitHubRepoCloner
-from helpers import parse_api_keys, estimate_processing_time
-from code_analyzer import DetailedCodeAnalyzer
-from folder_analyzer import FolderAnalyzer
-from graph_builder import KnowledgeGraphBuilder
-from hierarchical_analyzer import HierarchicalAnalyzer
-from processor import GuaranteedLLMProcessor
-from analysis_models import DetailedFileAnalysis
+from utils.git_utils import GitHubRepoCloner
+from utils.helpers import parse_api_keys, estimate_processing_time
+from parsers.code_analyzer import DetailedCodeAnalyzer
+from analyzers.folder_analyzer import FolderAnalyzer
+from analyzers.graph_builder import KnowledgeGraphBuilder
+from analyzers.hierarchical_analyzer import HierarchicalAnalyzer
+from llm.processor import GuaranteedLLMProcessor
+from models.analysis_models import DetailedFileAnalysis
 from config import should_skip_directory, get_file_language
 
 print('✅ Setup complete!')
