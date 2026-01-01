@@ -16,7 +16,7 @@ REQUIRED_PACKAGES = ['requests', 'aiohttp', 'pydantic', 'gitpython']
 
 def install_packages():
     """Install packages in background."""
-    print('📦 Installing packages in background...')
+    print(' Installing packages in background...')
     for pkg in REQUIRED_PACKAGES:
         subprocess.run([sys.executable, '-m', 'pip', 'install', '-q', pkg], 
                       capture_output=True, check=False)
@@ -333,10 +333,10 @@ class FastLLMProcessor:
                         "language": file_analysis.language
                     }
                     
-                    print(f"✅ Processed {file_analysis.file_path}")
+                    print(f"Processed {file_analysis.file_path}")
                     
                 except Exception as e:
-                    print(f"❌ Error processing {file_analysis.file_path}: {e}")
+                    print(f"Error processing {file_analysis.file_path}: {e}")
                     results[file_analysis.file_path] = {"error": str(e)}
         
         return results
@@ -468,7 +468,7 @@ class FastGitHubAnalyzer:
                 return {"error": "No code files found"}
             
             self.progress.set_total_files(len(all_files))
-            print(f"📁 Found {len(all_files)} code files")
+            print(f"Found {len(all_files)} code files")
             
             # Step 3: Extract functions and APIs
             self.progress.update_stage("Extracting functions and APIs...")
@@ -498,9 +498,9 @@ class FastGitHubAnalyzer:
                         self.progress.increment_processed()
                         
                     except Exception as e:
-                        print(f"❌ Error analyzing file: {e}")
+                        print(f"Error analyzing file: {e}")
             
-            print(f"🔍 Found {len(backend_files)} backend files with APIs")
+            print(f"Found {len(backend_files)} backend files with APIs")
             
             # Step 4: LLM processing for backend files
             llm_results = {}
@@ -562,13 +562,13 @@ class FastGitHubAnalyzer:
             }
             
             elapsed = time.time() - start_time
-            print(f"✅ Analysis complete in {elapsed:.1f}s!")
-            print(f"📊 Summary: {len(analyzed_files)} files, {len(backend_files)} backend, {total_apis} APIs, {total_functions} functions")
+            print(f"Analysis complete in {elapsed:.1f}s!")
+            print(f"Summary: {len(analyzed_files)} files, {len(backend_files)} backend, {total_apis} APIs, {total_functions} functions")
             
             return results
             
         except Exception as e:
-            print(f"❌ Analysis failed: {e}")
+            print(f"Analysis failed: {e}")
             return {"error": str(e)}
         
         finally:
@@ -638,31 +638,31 @@ class FastGitHubAnalyzer:
             try:
                 shutil.rmtree(self.temp_dir)
             except Exception as e:
-                print(f"⚠️ Could not clean up temp directory: {e}")
+                print(f"Could not clean up temp directory: {e}")
 
 async def main():
     """Main entry point for fast analyzer."""
     
     # Wait for package installation to complete
     install_thread.join()
-    print('✅ Package installation complete!')
+    print('Package installation complete!')
     
-    print("🚀 Fast GitHub API Documentation Generator")
+    print("Fast GitHub API Documentation Generator")
     print("=" * 50)
     
     # Get input
     repo_url = input("Enter GitHub repository URL: ").strip()
     if not repo_url:
-        print("❌ Repository URL is required")
+        print("Repository URL is required")
         return
     
     api_keys_input = input("Enter Groq API keys (comma-separated, optional): ").strip()
     api_keys = []
     if api_keys_input:
         api_keys = [key.strip() for key in api_keys_input.split(',') if key.strip()]
-        print(f"🔑 Using {len(api_keys)} API keys for documentation generation")
+        print(f"Using {len(api_keys)} API keys for documentation generation")
     else:
-        print("ℹ️ No API keys - will extract APIs but skip LLM documentation")
+        print("No API keys - will extract APIs but skip LLM documentation")
     
     # Run analysis
     analyzer = FastGitHubAnalyzer()
@@ -674,13 +674,13 @@ async def main():
         try:
             with open(output_file, 'w', encoding='utf-8') as f:
                 json.dump(results, f, indent=2, default=str)
-            print(f"📄 Results saved to {output_file}")
+            print(f"Results saved to {output_file}")
         except Exception as e:
-            print(f"⚠️ Could not save results: {e}")
+            print(f"Could not save results: {e}")
         
         # Print summary
         summary = results["summary"]
-        print(f"\n📊 Final Summary:")
+        print(f"\nFinal Summary:")
         print(f"   Analysis time: {results['analysis_time']:.1f}s")
         print(f"   Total files: {summary['total_files']}")
         print(f"   Backend files: {summary['backend_files']}")
