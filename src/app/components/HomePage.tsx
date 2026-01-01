@@ -82,10 +82,10 @@ export default function Git2Docs() {
                 <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all flex items-center gap-2 text-xl shadow-lg">
                   Start for Free
                 </button></Link>
-                <button className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all flex items-center gap-2 text-xl">
+                <Link href="https://github.com/anwitac246/github-to-docs"><button className="px-8 py-4 border-2 border-blue-600 text-blue-600 rounded-full font-semibold hover:bg-blue-50 transition-all flex items-center gap-2 text-xl">
                   <Github className="w-5 h-5" />
                   View on GitHub
-                </button>
+                </button></Link>
               </div>
             </div>
 

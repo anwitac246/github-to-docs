@@ -73,11 +73,13 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Github className="h-4 w-4" />
-              GitHub
-            </Button>
-            
+            <Link href="https://github.com/anwitac246/github-to-docs">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <Github className="h-4 w-4" />
+                GitHub
+              </Button>
+            </Link>
+
             {loading ? (
               <Button variant="default" size="sm" disabled>
                 Loading...
